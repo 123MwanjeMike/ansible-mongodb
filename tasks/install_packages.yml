@@ -6,12 +6,11 @@
 
 - name: Add an apt key by id from a keyserver
   apt_key:
-    url: https://www.mongodb.org/static/pgp/server-4.2.asc
+    url: https://www.mongodb.org/static/pgp/server-6.0.asc
     state: present
   become: true
 
 - name: Update APT Cache
-  become: true
   apt:
     update_cache: yes
 
@@ -38,14 +37,12 @@
   become: true
 
 - name: Remove old mongodb packages
-  become: true
   apt:
     update_cache: yes
     name: mongodb
     state: absent
 
 - name: Install the mongodb packages
-  become: true
   apt:
     name: mongodb-org
     state: present
@@ -56,7 +53,6 @@
   become: true
 
 - name: Full Upgrade
-  become: true
   apt:
     upgrade: dist
 
