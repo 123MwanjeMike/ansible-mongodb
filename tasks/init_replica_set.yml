@@ -2,6 +2,14 @@
 - name: Stop services
   include_tasks: service_stop.yml
 
+- name: Copy mongo keyfile
+  copy:
+    src: ./mongo-keyfile
+    dest: /srv/mongodb/mongodb-keyfile
+    owner: mongodb
+    group: mongodb        
+    mode: 0400
+
 - name: Configuring the replica set
   set_fact:
     configuring_replica_set: true
