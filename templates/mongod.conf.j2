@@ -83,7 +83,9 @@ net:
 {% endif %}
     disabledProtocols: "TLS1_0,TLS1_1"
     certificateKeyFile: {{ cert_path.chain.remote }}
+    certificateKeyFilePassword: {{ passphrase }}
     clusterFile: {{ cert_path.chain.remote }}
+    clusterPassword: {{ passphrase }}
     CAFile: {{ cert_path.intermediate.remote }}
 {% endif %}
 
