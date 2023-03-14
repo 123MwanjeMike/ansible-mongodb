@@ -7,6 +7,7 @@
 - name: Set the initial rs server group
   set_fact:
     rs_server_group: "{{ groups[rs_server_group_id] }}"
+  when: replica_set is defined and replica_set.group is defined
 
 - name: Set the rs_servers variable
   set_fact:
