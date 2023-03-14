@@ -4,11 +4,6 @@
     rs_server_group_id: "{{ cfg_server.group }}"
   when: cfg_server is defined and cfg_server.group is defined
 
-- name: Set the rs group name from replica_set
-  set_fact:
-    rs_server_group_id: "{{ replica_set.group }}"
-  when: replica_set is defined and replica_set.group is defined
-
 - name: Set the initial rs server group
   set_fact:
     rs_server_group: "{{ groups[rs_server_group_id] }}"
