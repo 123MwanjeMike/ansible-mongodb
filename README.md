@@ -1,3 +1,7 @@
+##### Note
+This ansible role was originally templated from [isaackehle](https://github.com/isaackehle)'s work [here](https://github.com/isaackehle/ansible-mongodb).
+The reason for a different role is that this one is intended to be more light weight and thus prune's some functionalities from the original which some users may still need.
+
 # Ansible Role - mongodb
 
 Configure the components of a MongoDB Cluster
