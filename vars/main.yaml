@@ -19,6 +19,8 @@ ports:
   shard: 27018
   config: 27019
 
+mongodb_security: "keyfile"
+
 mongo_configs:
   "6.0":
     ppa_pubkey: 4B7C549A058F8B6B
