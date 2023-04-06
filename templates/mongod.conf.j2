@@ -70,11 +70,11 @@ security:
 net:
   port: {{ rs_port }}
 {% if mongodb_security == 'keyfile' %}
-  bindIp: 127.0.0.1,{{ inventory_hostname }}
+  bindIp: 127.0.0.1,{{ ansible_host }}
 {% endif %}
 {% if mongodb_security == 'x509' %}
   bindIp: 0.0.0.0
-  # bindIp: 127.0.0.1,{{ inventory_hostname }}
+  # bindIp: 127.0.0.1,{{ ansible_host }}
   tls:
 {% if configuring_replica_set is not defined or not configuring_replica_set %}
     mode: requireTLS
