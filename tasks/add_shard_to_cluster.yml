@@ -5,6 +5,12 @@
     dest: /tmp/add_shard_to_cluster.js
   run_once: true
 
+- name: Change mongodb file permissions
+  file:
+    path: /var/lib/mongodb/
+    owner: mongodb
+    group: mongodb
+
 - name: Run the add_shard_to_cluster script
   shell: >
     mongosh
@@ -14,6 +20,6 @@
   run_once: true
   register: result
   until: result.rc == 0
-  retries: 5
+  retries: 3
   delay: 3
   when: true
