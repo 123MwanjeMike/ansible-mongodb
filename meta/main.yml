@@ -7,6 +7,7 @@ galaxy_info:
   platforms:
     - name: Ubuntu
       versions:
+        - jammy
         - focal
         - xenial
   galaxy_tags:
