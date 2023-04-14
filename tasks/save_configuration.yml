@@ -33,10 +33,5 @@
     daemon_reload: yes
   become: true
 
-- name: Enable mongodb service
-  service:
-    name: mongod
-    enabled: true
-
-- name: Start the appropriate services
+- name: Start and enable mongodb service
   include_tasks: service_start.yml
