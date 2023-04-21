@@ -65,8 +65,8 @@ replica_set:
 ```
 
 ## Tags/Flags
-I use a system of flags and tags that allow the calling playbook to specify which roles are run.
-As an example:
+You can use a system of flags and tags that allow the calling playbook to specify which roles are run.
+For example:
 
 ```bash
 ansible-playbook playbooks/mongodb.yml -e "{'flags': ['install']}"
@@ -81,8 +81,8 @@ ansible-playbook playbooks/mongodb.yml -e "{'flags': ['create_database']}"
 | Flag                 | Purpose                                                                          |
 | -------------------- | -------------------------------------------------------------------------------- |
 | install              | Install mongo packages                                                           |
-| save_config          | Basic initialization. This is potentially distructive!                           |
-| reset_storage        | Clear directories and logs. This is potentially distructive!                     |
+| save_config          | Basic initialization. Destructive for existing installations!                    |
+| reset_storage        | Clear directories and logs. Destructive for existing installations!              |
 | init_replica_set     | Initialize the replica set configuration                                         |
 | add_shard_to_cluster | Add a replica set of a shard server to the cluster of shard servers              |
 | create_database      | Do an initial database creation, with username and password                      |
@@ -95,7 +95,7 @@ vars:
     server: # One of the members of the new replicate set to add
 ```
 
-## Examples
+###### Sample playbook
 ```yaml
 - hosts: all
   vars:
@@ -113,8 +113,8 @@ vars:
 
   roles:
     - { role: 123mwanjemike.mongodb, flags: ['install'] }
-    - { role: 123mwanjemike.mongodb, flags: ['save_config'] }
-    - { role: 123mwanjemike.mongodb, flags: ['reset_storage'] }
+    - { role: 123mwanjemike.mongodb, flags: ['save_config'] } # Destructive for existing installation! 
+    - { role: 123mwanjemike.mongodb, flags: ['reset_storage'] } # Destructive for existing installation!
     - { role: 123mwanjemike.mongodb, flags: ['init_replica_set'] }
     - { role: 123mwanjemike.mongodb, flags: ['add_shard_to_cluster'] }
     - { role: 123mwanjemike.mongodb, flags: ['create_database'] }
