@@ -16,3 +16,4 @@
 - name: Remove the create_database script
   file:
     dest: /tmp/create_database.js
+    state: absent
