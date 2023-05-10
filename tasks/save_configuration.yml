@@ -3,7 +3,6 @@
   include_tasks: service_stop.yml
 
 - name: Remove all mongo config files
-  become: true
   file:
     dest: "{{ item.dest }}"
     state: absent
@@ -19,7 +18,6 @@
     - { dest: /etc/mongos.conf }
 
 - name: Put daemon or standalone mongo settings into place
-  become: true
   template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
@@ -36,7 +34,6 @@
   become: true
 
 - name: Enable mongodb service
-  become: true
   service:
     name: mongod
     enabled: true

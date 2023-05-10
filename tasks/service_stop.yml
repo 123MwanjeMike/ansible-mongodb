@@ -15,7 +15,6 @@
   register: stat_s
 
 - name: Stop the daemon service
-  become: true
   service:
     name: mongod
     state: stopped
@@ -23,7 +22,6 @@
     - stat_db.stat.exists
 
 - name: Stop the daemon service
-  become: true
   service:
     name: mongod
     state: stopped
@@ -31,7 +29,6 @@
     - stat_d.stat.exists
 
 - name: Stop the shard service
-  become: true
   service:
     name: mongos
     state: stopped

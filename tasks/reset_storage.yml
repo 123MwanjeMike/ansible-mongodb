@@ -17,7 +17,6 @@
   file:
     path: "{{ mount_path }}"
     state: absent
-  become: true
   when: stat_mnt.stat.isdir is defined and stat_mnt.stat.isdir
 
 - name: Create db dir, basic

@@ -20,18 +20,9 @@ ports:
   config: 27019
 
 mongo_configs:
-  "4.2":
+  "6.0":
     ppa_pubkey: 4B7C549A058F8B6B
-    keyfile_name: server-4.2.asc
+    keyfile_name: server-6.0.asc
   "4.0":
     ppa_pubkey: 9DA31620334BD75D9DCB49F368818C72E52529D4
     keyfile_name: server-4.0.asc
-  "3.6":
-    ppa_pubkey: 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5
-    keyfile_name: server-3.6.asc
-  "3.4":
-    ppa_pubkey: A15703C6
-    keyfile_name: server-3.4.asc
-  "3.2":
-    ppa_pubkey: EA312927
-    keyfile_name: server-3.2.asc
