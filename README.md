@@ -1,11 +1,13 @@
+##### Note
+This ansible role was originally templated from [isaackehle](https://github.com/isaackehle)'s work [here](https://github.com/isaackehle/ansible-mongodb).
+The reason for a different role is that this one is intended to be more light weight and thus prune's some functionalities from the original which some users may still need.
+
 # Ansible Role - mongodb
 
 Configure the components of a MongoDB Cluster
-
-Available on Ansible Galaxy: [isaackehle.mongodb](https://galaxy.ansible.com/isaackehle/ansible_mongodb)
+Available on [Ansible Galaxy](https://galaxy.ansible.com/123mwanjemike/ansible_mongodb)
 
 ## Variables
-
 Required definitions are as follows:
 
 ```yaml
@@ -21,19 +23,16 @@ replica_set:
 Host Definitions typically contain the following:
 
 ### Replica Set Only
-
 ```yaml
 cluster_role: "replicaSet"
 ```
 
 ### Router Server
-
 ```yaml
 cluster_role: "router"
 ```
 
 ### Config Server
-
 ```yaml
 cluster_role: "config"
 replica_set:
@@ -42,7 +41,6 @@ replica_set:
 ```
 
 ### Shard Server
-
 ```yaml
 cluster_role: "shard"
 replica_set:
@@ -51,7 +49,6 @@ replica_set:
 ```
 
 ## Tags/Flags
-
 I use a system of flags and tags that allow the calling playbook to specify which roles are run.
 As an example:
 
@@ -65,7 +62,6 @@ ansible-playbook playbooks/mongodb.yml -e "{'flags': ['create_database']}"
 ```
 
 ## Flags and Variables
-
 | Flag                 | Purpose                                                                          |
 | -------------------- | -------------------------------------------------------------------------------- |
 | install              | Install mongo packages                                                           |
@@ -84,7 +80,6 @@ vars:
 ```
 
 ## Examples
-
 ```yaml
 - hosts: all
   vars:
@@ -101,34 +96,22 @@ vars:
     adminPass: ''
 
   roles:
-    - { role: isaackehle.mongodb, flags: ['install'] }
-    - { role: isaackehle.mongodb, flags: ['save_config'] }
-    - { role: isaackehle.mongodb, flags: ['reset_storage'] }
-    - { role: isaackehle.mongodb, flags: ['init_replica_set'] }
-    - { role: isaackehle.mongodb, flags: ['add_shard_to_cluster'] }
-    - { role: isaackehle.mongodb, flags: ['create_database'] }
+    - { role: 123mwanjemike.mongodb, flags: ['install'] }
+    - { role: 123mwanjemike.mongodb, flags: ['save_config'] }
+    - { role: 123mwanjemike.mongodb, flags: ['reset_storage'] }
+    - { role: 123mwanjemike.mongodb, flags: ['init_replica_set'] }
+    - { role: 123mwanjemike.mongodb, flags: ['add_shard_to_cluster'] }
+    - { role: 123mwanjemike.mongodb, flags: ['create_database'] }
 ```
 
 ## Linting
-
 ```bash
 yamllint -c yamllint.yaml .
 ansible-lint .
 ```
 
-## License
-
-MIT
-
-## Author Information
-
-Isaac Kehle
-@isaackehle ([twitter](https://twitter.com/isaackehle), [github](https://github.com/isaackehle), [linkedin](https://www.linkedin.com/in/isaackehle))
-
 ### References
-
 - MongoDB
-
   - [Security Hardening](https://docs.mongodb.com/manual/core/security-hardening/)
   - [X509](https://docs.mongodb.com/manual/core/security-x.509/)
   - [Deploy Shard Cluster](https://docs.mongodb.com/manual/tutorial/deploy-shard-cluster/)
@@ -140,7 +123,6 @@ Isaac Kehle
   - [Deploy Replica Set w/ Keyfill Access Control](https://docs.mongodb.com/v3.2/tutorial/deploy-replica-set-with-keyfile-access-control/)
   - [db.createUser()](https://docs.mongodb.com/manual/reference/method/db.createUser/#db.createUser)
   - [Secure MongoDB With x509](https://www.mongodb.com/blog/post/secure-mongodb-with-x-509-authentication)
-
 - Digital Ocean
   - [Implement Replica Sets on Ubuntu VPS](https://www.digitalocean.com/community/tutorials/how-to-implement-replication-sets-in-mongodb-on-an-ubuntu-vps)
   - [Create a Sharded Cluster 12.04](https://www.digitalocean.com/community/tutorials/how-to-create-a-sharded-cluster-in-mongodb-using-an-ubuntu-12-04-vps)
