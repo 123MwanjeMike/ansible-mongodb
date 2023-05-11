@@ -34,6 +34,7 @@
     src: templates/init_replica_set.js.j2
     dest: /tmp/init_replica_set.js
   run_once: true
+  when: cluster_role != 'router'
 
 - name: Run the init_replica_set.js script
   shell: mongosh --port {{ rs_port }} < /tmp/init_replica_set.js
@@ -42,12 +43,13 @@
   until: res_rsi.rc == 0
   retries: 3
   delay: 5
-  when: true
+  when: cluster_role != 'router'
 
 - name: Remove the init_replica_set.js script from remote tmp
   file:
     dest: /tmp/init_replica_set.js
     state: absent
+  when: cluster_role != 'router'
 
 - name: Stop the daemon service
   service:
