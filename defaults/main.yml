@@ -1,25 +1,5 @@
 ---
-
 flags:
   - none
-
-mongo_version:          "6.0"
-
-auth_db:                "admin"
-
-cert_path:
-  csr:
-  key:
-    remote:     ""
-    local:      ""
-  cert:
-    remote:     ""
-    local:      ""
-  chain:
-    remote:     ""
-    local:      ""
-  intermediate:
-    remote:     ""
-    local:      ""
-  dhparam:     
-    remote:     ""
+mongo_version: "6.0"
+auth_db:       "admin"
