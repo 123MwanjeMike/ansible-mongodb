@@ -11,9 +11,6 @@
     owner: mongodb
     group: mongodb
 
-- name: Start mongodb service
-  include_tasks: service_start.yml
-
 - name: Run the add_shard_to_cluster script
   shell: >
     mongosh
@@ -26,6 +23,3 @@
   retries: 3
   delay: 3
   when: cluster_role != 'router'
-
-- name: Stop services
-  include_tasks: service_stop.yml
