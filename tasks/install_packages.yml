@@ -6,11 +6,11 @@
 
 - name: Add an apt key by id from a keyserver
   apt_key:
-    url: https://www.mongodb.org/static/pgp/server-6.0.asc
+    url: https://www.mongodb.org/static/pgp/{{ mongo_configs[mongo_version].keyfile_name }}
     state: present
   become: true
 
-- name: Update APT Cache
+- name: Update apt cache
   apt:
     update_cache: yes
 
@@ -22,12 +22,12 @@
     state: present
   become: true
 
-- name: Variables
+- name: Set lsb_release and mongo_cfg variables
   set_fact:
     lsb_release: "{{ lsb_release_out.stdout }}"
     mongo_cfg: "{{ mongo_configs[mongo_version] }}"
 
-- name: Save List
+- name: Save mongod package list
   template:
     src: templates/mongod.list.j2
     dest: /etc/apt/sources.list.d/mongod.list
@@ -42,25 +42,12 @@
     name: mongodb
     state: absent
 
-- name: Install the mongodb packages
-  apt:
-    name: mongodb-org
-    state: present
-
 - name: Autoremove unused packages
   apt:
     autoremove: yes
   become: true
 
-- name: Full Upgrade
+- name: Install the mongodb packages
   apt:
-    upgrade: dist
-
-- name: Stop services
-  include_tasks: service_stop.yml
-
-- name: kill logs
-  include_tasks: kill_logs.yml
-
-- name: Start services
-  include_tasks: service_start.yml
+    name: mongodb-org
+    state: present

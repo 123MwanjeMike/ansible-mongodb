@@ -7,6 +7,20 @@
   include_tasks: install_packages.yml
   when: ((['install'] | intersect(flags)) | length > 0)
 
+## Tasks eliminated from the install playbook
+# - name: Full Upgrade
+#   apt:
+#     upgrade: dist
+
+# - name: Stop services
+#   include_tasks: service_stop.yml
+
+# - name: kill logs
+#   include_tasks: kill_logs.yml
+
+# - name: Start services
+#   include_tasks: service_start.yml
+
 - name: Reset Storage
   include_tasks: reset_storage.yml
   when: ((['reset_storage'] | intersect(flags)) | length > 0)
