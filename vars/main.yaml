@@ -4,6 +4,7 @@ mount_path: "{{ mount_base }}/mongodb"
 storage_path: /srv/mongodb
 log_path: "/var/log/mongodb"
 log_file: "{{ log_path }}/mongodb.log"
+keyfile_src: ./keyfile
 keyfile_path: /srv/mongodb/mongodb-keyfile
 rs_servers: []
 rs_server_group: []

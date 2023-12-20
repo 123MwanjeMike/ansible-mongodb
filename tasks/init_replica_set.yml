@@ -9,7 +9,7 @@
 
 - name: Copy mongo keyfile
   copy:
-    src: ./mongo-keyfile
+    src: "{{ keyfile_src }}"
     dest: "{{ keyfile_path }}"
     owner: mongodb
     group: mongodb        
