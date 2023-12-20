@@ -39,9 +39,14 @@
   include_tasks: reset_storage.yml
   when: ((['reset_storage'] | intersect(flags)) | length > 0)
 
+
+# - name: Stop services
+#   include_tasks: service_stop.yml
 - name: Init Replica Set
   include_tasks: init_replica_set.yml
   when: ((['init_replica_set'] | intersect(flags)) | length > 0)
+# - name: Start the daemon service
+#   include_tasks: service_start.yml
 
 - name: Add Replica Set to Cluster
   include_tasks: add_shard_to_cluster.yml
