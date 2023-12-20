@@ -10,8 +10,6 @@ rs_servers: []
 rs_server_group: []
 config_db: ""
 ports:
-  standalone: 27017
-  replicaSet: 27017
   router: 27017
   shard: 27018
   config: 27019
