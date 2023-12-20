@@ -11,7 +11,6 @@
   file:
     path: "{{ storage_path }}"
     state: absent
-  become: true
 
 - name: Delete mounted directory
   file:
@@ -27,7 +26,6 @@
     group: mongodb
     mode: "0755"
   when: stat_mnt.stat.isdir is not defined or not stat_mnt.stat.isdir
-  become: true
 
 - name: Create db dir, mounted
   file:
@@ -37,7 +35,6 @@
     group: mongodb
     mode: "0755"
   when: stat_mnt.stat.isdir is defined and stat_mnt.stat.isdir
-  become: true
 
 - name: Create link, if needed
   file:
@@ -48,4 +45,3 @@
     group: mongodb
     mode: "0755"
   when: stat_mnt.stat.isdir is defined and stat_mnt.stat.isdir
-  become: true

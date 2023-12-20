@@ -8,7 +8,6 @@
   apt_key:
     url: https://www.mongodb.org/static/pgp/{{ mongo_configs[mongo_version].keyfile_name }}
     state: present
-  become: true
 
 - name: Update apt cache
   apt:
@@ -20,7 +19,6 @@
       - build-essential
       - gpg
     state: present
-  become: true
 
 - name: Set lsb_release and mongo_cfg variables
   set_fact:
@@ -34,7 +32,6 @@
     owner: root
     group: root
     mode: "u=rw,g=r,o=r"
-  become: true
 
 - name: Remove old mongodb packages
   apt:
@@ -45,7 +42,6 @@
 - name: Autoremove unused packages
   apt:
     autoremove: yes
-  become: true
 
 - name: Install the mongodb packages
   apt:
