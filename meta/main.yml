@@ -3,10 +3,12 @@ galaxy_info:
   description: Configure the components of a MongoDB Cluster
   company: 123mwanjemike
   license: MIT
-  min_ansible_version: 2.4
+  min_ansible_version: 2.8
   platforms:
     - name: Ubuntu
       versions:
+        - jammy
+        - focal
         - xenial
   galaxy_tags:
     - system

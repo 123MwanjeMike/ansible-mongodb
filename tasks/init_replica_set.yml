@@ -68,7 +68,5 @@
     group: root
     mode: "u=rw,g=r,o=r"
 
-- name: Restart the daemon service
-  service:
-    name: mongod
-    state: started
+- name: Start the daemon service
+  include_tasks: service_start.yml

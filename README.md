@@ -1,6 +1,9 @@
 ##### Note
 This ansible role was originally templated from [isaackehle](https://github.com/isaackehle)'s work [here](https://github.com/isaackehle/ansible-mongodb).
-The reason for a different role is that this one is intended to be more light weight and thus prune's some functionalities from the original which some users may still need.
+The reason for a different role is that this one is intended to be more light weight and thus prune's some functionalities from the original which some users may still need. These include:
+- [x509 security](https://www.mongodb.com/docs/manual/core/security-x.509/)
+
+This set up implements authentication using a mongodb keyfile and is thus ideal to have the servers runing in a VPC.
 
 # Ansible Role - mongodb
 
@@ -29,8 +32,9 @@ Both the config and shard hosts belong to already initiated respective replicase
 - [ ] Creates the normal user
 
 **June 2023**
-- [ ] Initiates the config replicaset
-- [ ] Can initiate a shard replicaset
+- [ ] Initiates the config replicaset(s)
+- [ ] Can initiate a shard replicaset(s)
+- [ ] Adds the shard replicaset(s)
 
 Host Definitions typically contain the following:
 
@@ -61,8 +65,8 @@ replica_set:
 ```
 
 ## Tags/Flags
-I use a system of flags and tags that allow the calling playbook to specify which roles are run.
-As an example:
+You can use a system of flags and tags that allow the calling playbook to specify which roles are run.
+For example:
 
 ```bash
 ansible-playbook playbooks/mongodb.yml -e "{'flags': ['install']}"
@@ -77,8 +81,8 @@ ansible-playbook playbooks/mongodb.yml -e "{'flags': ['create_database']}"
 | Flag                 | Purpose                                                                          |
 | -------------------- | -------------------------------------------------------------------------------- |
 | install              | Install mongo packages                                                           |
-| save_config          | Basic initialization. Stop Services, push service/config files, restart services |
-| reset_storage        | Clear directories and logs                                                       |
+| save_config          | Basic initialization. Destructive for existing installations!                    |
+| reset_storage        | Clear directories and logs. Destructive for existing installations!              |
 | init_replica_set     | Initialize the replica set configuration                                         |
 | add_shard_to_cluster | Add a replica set of a shard server to the cluster of shard servers              |
 | create_database      | Do an initial database creation, with username and password                      |
@@ -91,7 +95,7 @@ vars:
     server: # One of the members of the new replicate set to add
 ```
 
-## Examples
+###### Sample playbook
 ```yaml
 - hosts: all
   vars:
@@ -109,8 +113,8 @@ vars:
 
   roles:
     - { role: 123mwanjemike.mongodb, flags: ['install'] }
-    - { role: 123mwanjemike.mongodb, flags: ['save_config'] }
-    - { role: 123mwanjemike.mongodb, flags: ['reset_storage'] }
+    - { role: 123mwanjemike.mongodb, flags: ['save_config'] } # Destructive for existing installation! 
+    - { role: 123mwanjemike.mongodb, flags: ['reset_storage'] } # Destructive for existing installation!
     - { role: 123mwanjemike.mongodb, flags: ['init_replica_set'] }
     - { role: 123mwanjemike.mongodb, flags: ['add_shard_to_cluster'] }
     - { role: 123mwanjemike.mongodb, flags: ['create_database'] }
@@ -122,19 +126,11 @@ yamllint -c yamllint.yaml .
 ansible-lint .
 ```
 
-### References
-- MongoDB
+#### References
   - [Security Hardening](https://docs.mongodb.com/manual/core/security-hardening/)
-  - [X509](https://docs.mongodb.com/manual/core/security-x.509/)
   - [Deploy Shard Cluster](https://docs.mongodb.com/manual/tutorial/deploy-shard-cluster/)
   - [Add Shards to Cluster](https://docs.mongodb.com/manual/tutorial/add-shards-to-shard-cluster)
   - [Authorization](https://docs.mongodb.com/manual/core/authorization/)
   - [Internal Auth](https://docs.mongodb.com/manual/core/security-internal-authentication/)
-  - [Configure Member Certificates](https://docs.mongodb.com/manual/tutorial/configure-x509-member-authentication/*x509-member-certificate)
   - [Enforce Keyfile Access Control](https://docs.mongodb.com/manual/tutorial/enforce-keyfile-access-control-in-existing-replica-set/)
   - [Deploy Replica Set w/ Keyfill Access Control](https://docs.mongodb.com/v3.2/tutorial/deploy-replica-set-with-keyfile-access-control/)
-  - [db.createUser()](https://docs.mongodb.com/manual/reference/method/db.createUser/#db.createUser)
-  - [Secure MongoDB With x509](https://www.mongodb.com/blog/post/secure-mongodb-with-x-509-authentication)
-- Digital Ocean
-  - [Implement Replica Sets on Ubuntu VPS](https://www.digitalocean.com/community/tutorials/how-to-implement-replication-sets-in-mongodb-on-an-ubuntu-vps)
-  - [Create a Sharded Cluster 12.04](https://www.digitalocean.com/community/tutorials/how-to-create-a-sharded-cluster-in-mongodb-using-an-ubuntu-12-04-vps)
