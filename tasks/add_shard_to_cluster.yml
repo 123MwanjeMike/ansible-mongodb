@@ -22,4 +22,4 @@
   until: result.rc == 0
   retries: 3
   delay: 3
-  when: true
+  when: cluster_role != 'router'

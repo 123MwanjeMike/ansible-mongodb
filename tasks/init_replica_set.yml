@@ -2,10 +2,15 @@
 - name: Stop services
   include_tasks: service_stop.yml
 
+- name: Create storage_path directory
+  file:
+    path: "{{ storage_path }}"
+    state: directory
+
 - name: Copy mongo keyfile
   copy:
     src: ./mongo-keyfile
-    dest: /srv/mongodb/mongodb-keyfile
+    dest: "{{ keyfile_path }}"
     owner: mongodb
     group: mongodb        
     mode: 0400
