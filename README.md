@@ -23,8 +23,6 @@ replica_set:
   group: "my-cfg-servers" # group name for all servers in the replica set
 ```
 
-##### Assumptions
-Both the config and shard hosts belong to already initiated respective replicasets
 
 ### Roadmap
 **May 2023**
