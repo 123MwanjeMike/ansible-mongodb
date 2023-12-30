@@ -24,7 +24,7 @@
     state: directory
     owner: mongodb
     group: mongodb
-    mode: "0755"
+    mode: 0755
   when: stat_mnt.stat.isdir is not defined or not stat_mnt.stat.isdir
 
 - name: Create db dir, mounted
@@ -33,7 +33,7 @@
     state: directory
     owner: mongodb
     group: mongodb
-    mode: "0755"
+    mode: 0755
   when: stat_mnt.stat.isdir is defined and stat_mnt.stat.isdir
 
 - name: Create link, if needed
@@ -43,5 +43,5 @@
     state: link
     owner: mongodb
     group: mongodb
-    mode: "0755"
+    mode: 0755
   when: stat_mnt.stat.isdir is defined and stat_mnt.stat.isdir

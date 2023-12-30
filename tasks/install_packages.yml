@@ -1,6 +1,6 @@
 ---
 - name: Get release value
-  command: lsb_release -sc
+  shell: lsb_release -sc
   register: lsb_release_out
   when: true
 
@@ -31,7 +31,7 @@
     dest: /etc/apt/sources.list.d/mongod.list
     owner: root
     group: root
-    mode: "u=rw,g=r,o=r"
+    mode: u=rw,g=r,o=r
 
 - name: Remove old mongodb packages
   apt:

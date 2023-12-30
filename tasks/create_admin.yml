@@ -1,0 +1,22 @@
+---
+- name: Save the admin_init script
+  template:
+    src: templates/admin_init.js.j2
+    dest: /tmp/admin_init.js
+
+- name: Run the admin_init.js script
+  shell: mongosh --host {{ ansible_fqdn }} --port {{ rs_port }} < /tmp/admin_init.js > {{ log_path }}/admin_init.log
+  register: result
+  delegate_to: "{{ groups[replica_set.group] | first }}"
+  args:
+    creates: "{{ log_path }}/admin_init.log"
+
+- name: Remove the admin_init script
+  file:
+    dest: /tmp/admin_init.js
+    state: absent
+
+- name: Restart mongod service
+  service:
+    name: mongod
+    state: restarted

@@ -1,8 +1,11 @@
 ---
-- name: Create storage_path directory
+- name: Create storage_path directory and set ownership
   file:
     path: "{{ storage_path }}"
     state: directory
+    owner: mongodb
+    group: mongodb
+    mode: 0755
 
 - name: Copy mongo keyfile
   copy:
@@ -22,38 +25,34 @@
     dest: /etc/mongod.conf
     owner: root
     group: root
-    mode: "u=rw,g=r,o=r"
+    mode: u=rw,g=r,o=r
+
+- name: Save the init_replica_set.js template to remote tmp
+  template:
+    src: templates/replica_set_init.js.j2
+    dest: /tmp/replica_set_init.js
 
 - name: Start the appropriate services
   include_tasks: service_start.yml
 
-- name: Delay
+- name: Wait for services to start
   pause:
     seconds: 5
 
-- name: Save the init_replica_set.js template to remote tmp
-  template:
-    src: templates/init_replica_set.js.j2
-    dest: /tmp/init_replica_set.js
-  run_once: true
-
 - name: Run the init_replica_set.js script
-  shell: mongosh --port {{ rs_port }} < /tmp/init_replica_set.js
-  run_once: true
+  shell: mongosh --port {{ rs_port }} < /tmp/replica_set_init.js > {{ log_path }}/rs_init.log
   register: res_rsi
   until: res_rsi.rc == 0
   retries: 3
   delay: 5
+  delegate_to: "{{ groups[replica_set.group] | first }}"
+  args:
+    creates: "{{ log_path }}/rs_init.log"
 
 - name: Remove the init_replica_set.js script from remote tmp
   file:
-    dest: /tmp/init_replica_set.js
+    dest: /tmp/replica_set_init.js
     state: absent
-
-- name: Stop the daemon service
-  service:
-    name: mongod
-    state: stopped
 
 - name: No longer configuring the replica set
   set_fact:
@@ -65,4 +64,4 @@
     dest: /etc/mongod.conf
     owner: root
     group: root
-    mode: "u=rw,g=r,o=r"
+    mode: u=rw,g=r,o=r

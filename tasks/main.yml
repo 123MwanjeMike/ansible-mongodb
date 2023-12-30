@@ -6,47 +6,22 @@
 - name: Install Packages
   include_tasks: install_packages.yml
   when: ((['install'] | intersect(flags)) | length > 0)
-## Tasks eliminated from the install playbook
-# - name: Full Upgrade
-#   apt:
-#     upgrade: dist
 
-# - name: Stop services
-#   include_tasks: service_stop.yml
-
-# - name: kill logs
-#   include_tasks: kill_logs.yml
-
-# - name: Start services
-#   include_tasks: service_start.yml
-
-
-
-# - name: Stop services
-#   include_tasks: service_stop.yml
 - name: Save Configuration
   include_tasks: save_configuration.yml
   when: ((['save_config'] | intersect(flags)) | length > 0)
-# - name: Reload the systemd daemon
-#   systemd:
-#     daemon_reload: yes
-#   become: true
-
-# - name: Start and enable mongodb service
-#   include_tasks: service_start.yml
 
 - name: Reset Storage
   include_tasks: reset_storage.yml
   when: ((['reset_storage'] | intersect(flags)) | length > 0)
 
-
-# - name: Stop services
-#   include_tasks: service_stop.yml
 - name: Init Replica Set
   include_tasks: init_replica_set.yml
   when: ((['init_replica_set'] | intersect(flags)) | length > 0)
-# - name: Start the daemon service
-#   include_tasks: service_start.yml
+
+- name: Create admin user
+  include_tasks: create_admin.yml
+  when: ((['create_admin'] | intersect(flags)) | length > 0)
 
 - name: Add Replica Set to Cluster
   include_tasks: add_shard_to_cluster.yml

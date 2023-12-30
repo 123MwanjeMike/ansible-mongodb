@@ -5,11 +5,7 @@
     dest: /tmp/user_init.js
 
 - name: Run the user_init.js script
-  command: >
-    mongosh
-    --host {{ ansible_fqdn }}
-    --port {{ rs_port }}
-    < /tmp/user_init.js
+  shell: mongosh --host {{ ansible_fqdn }} --port {{ rs_port }} < /tmp/user_init.js
   register: result
   run_once: true
   when: true

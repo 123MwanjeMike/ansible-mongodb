@@ -6,9 +6,6 @@ log_path: "/var/log/mongodb"
 log_file: "{{ log_path }}/mongodb.log"
 keyfile_src: ./keyfile
 keyfile_path: /srv/mongodb/mongodb-keyfile
-rs_servers: []
-rs_server_group: []
-config_db: ""
 ports:
   router: 27017
   shard: 27018
