@@ -22,7 +22,7 @@ opt.configsvr = true;
 // Set this to specify the replica set is a shard server
 {% endif %}
 
-{% for hn in rs_server_group %}
+{% for hn in groups[replica_set.group] %}
 opt.members.push({_id: {{ loop.index0 }}, host: '{{ hostvars[ hn ].ansible_fqdn }}:{{ rs_port }}'});
 {% endfor %}
 

@@ -32,8 +32,8 @@ Both the config and shard hosts belong to already initiated respective replicase
 - [ ] Creates the normal user
 
 **June 2023**
-- [ ] Initiates the config replicaset(s)
-- [ ] Can initiate a shard replicaset(s)
+- [x] Initiates the config replicaset(s)
+- [x] Can initiate a shard replicaset(s)
 - [ ] Adds the shard replicaset(s)
 
 Host Definitions typically contain the following:
