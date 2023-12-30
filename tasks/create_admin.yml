@@ -1,20 +1,14 @@
 ---
-- name: Save the user_admin_init script
+- name: Save the admin_init script
   template:
     src: templates/admin_init.js.j2
-    dest: /tmp/user_admin_init.js
+    dest: /tmp/admin_init.js
 
-- name: Run the user_admin_init.js script
-  command: >
-    mongosh
-    --host {{ ansible_fqdn }}
-    --port {{ rs_port }}
-    < /tmp/user_admin_init.js
+- name: Run the admin_init.js script
+  shell: mongosh --host {{ ansible_fqdn }} --port {{ rs_port }} < /tmp/admin_init.js
   register: result
-  run_once: true
-  when: true
 
-- name: Remove the user_admin_init script
+- name: Remove the admin_init script
   file:
-    dest: /tmp/user_admin_init.js
+    dest: /tmp/admin_init.js
     state: absent

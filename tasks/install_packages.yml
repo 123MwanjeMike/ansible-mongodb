@@ -1,6 +1,6 @@
 ---
 - name: Get release value
-  command: lsb_release -sc
+  shell: lsb_release -sc
   register: lsb_release_out
   when: true
 
