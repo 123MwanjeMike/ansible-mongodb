@@ -26,7 +26,7 @@ replica_set:
 
 ### Roadmap
 **May 2023**
-- [ ] Creates admin user
+- [x] Creates admin user
 - [ ] Creates the normal user
 
 **June 2023**
@@ -82,6 +82,7 @@ ansible-playbook playbooks/mongodb.yml -e "{'flags': ['create_database']}"
 | save_config          | Basic initialization. Destructive for existing installations!                    |
 | reset_storage        | Clear directories and logs. Destructive for existing installations!              |
 | init_replica_set     | Initialize the replica set configuration                                         |
+| create_admin         | Creates the admin user                                                           |
 | add_shard_to_cluster | Add a replica set of a shard server to the cluster of shard servers              |
 | create_database      | Do an initial database creation, with username and password                      |
 
