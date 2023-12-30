@@ -31,7 +31,6 @@
   template:
     src: templates/init_replica_set.js.j2
     dest: /tmp/init_replica_set.js
-  run_once: true
 
 - name: Start the appropriate services
   include_tasks: service_start.yml
@@ -41,17 +40,14 @@
     seconds: 5
 
 - name: Run the init_replica_set.js script
-  shell: mongosh --port {{ rs_port }} < /tmp/init_replica_set.js
-  run_once: true
+  shell: mongosh --port {{ rs_port }} < /tmp/init_replica_set.js > {{ log_path }}/rs_init.log
   register: res_rsi
   until: res_rsi.rc == 0
   retries: 3
   delay: 5
-
-- name: Stop the daemon service
-  service:
-    name: mongod
-    state: stopped
+  delegate_to: "{{ groups[replica_set.group] | first }}"
+  args:
+    creates: "{{ log_path }}/rs_init.log"
 
 - name: Remove the init_replica_set.js script from remote tmp
   file:
