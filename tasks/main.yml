@@ -19,6 +19,10 @@
   include_tasks: init_replica_set.yml
   when: ((['init_replica_set'] | intersect(flags)) | length > 0)
 
+- name: Create admin user
+  include_tasks: create_admin.yml
+  when: ((['create_admin'] | intersect(flags)) | length > 0)
+
 - name: Add Replica Set to Cluster
   include_tasks: add_shard_to_cluster.yml
   when: ((['add_shard_to_cluster'] | intersect(flags)) | length > 0)
