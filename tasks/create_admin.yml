@@ -15,3 +15,8 @@
   file:
     dest: /tmp/admin_init.js
     state: absent
+
+- name: Restart mongod service
+  service:
+    name: mongod
+    state: restarted

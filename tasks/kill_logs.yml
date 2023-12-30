@@ -8,3 +8,4 @@
     - "{{ log_path }}/mongod.log"
     - "{{ log_path }}/mongos.log"
     - "{{ log_path }}/rs_init.log"
+    - "{{ log_path }}/admin_init.log"
