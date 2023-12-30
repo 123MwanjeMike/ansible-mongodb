@@ -1,7 +1,7 @@
 ---
 - name: Save the user_admin_init script
   template:
-    src: templates/user_admin_init.js.j2
+    src: templates/admin_init.js.j2
     dest: /tmp/user_admin_init.js
 
 - name: Run the user_admin_init.js script
