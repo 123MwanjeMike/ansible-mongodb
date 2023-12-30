@@ -27,11 +27,6 @@
 - name: Save Configuration
   include_tasks: save_configuration.yml
   when: ((['save_config'] | intersect(flags)) | length > 0)
-# - name: Reload the systemd daemon
-#   systemd:
-#     daemon_reload: yes
-#   become: true
-
 # - name: Start and enable mongodb service
 #   include_tasks: service_start.yml
 
