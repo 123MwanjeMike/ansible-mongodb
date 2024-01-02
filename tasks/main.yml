@@ -3,7 +3,7 @@
   include_tasks: install_mongo.yml
   when: ((['install_mongo'] | intersect(flags)) | length > 0)
 
-- name: Save configuration
+- name: Configure mongo
   include_tasks: save_configuration.yml
   when: ((['configure_mongo'] | intersect(flags)) | length > 0)
 
@@ -15,9 +15,9 @@
   include_tasks: stop_mongo.yml
   when: ((['stop_mongo'] | intersect(flags)) | length > 0)
 
-- name: Reset storage
-  include_tasks: reset_storage.yml
-  when: ((['reset_storage'] | intersect(flags)) | length > 0)
+- name: Prepare all cluster members
+  include_tasks: prepare_members.yml
+  when: ((['prepare_members'] | intersect(flags)) | length > 0)
 
 - name: Init replica set
   include_tasks: init_replica.yml

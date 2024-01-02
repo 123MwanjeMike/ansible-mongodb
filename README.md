@@ -69,7 +69,7 @@ For example:
 ```bash
 ansible-playbook playbooks/mongodb.yml -e "{'flags': ['install']}"
 ansible-playbook playbooks/mongodb.yml -e "{'flags': ['save_config']}"
-ansible-playbook playbooks/mongodb.yml -e "{'flags': ['reset_storage']}"
+ansible-playbook playbooks/mongodb.yml -e "{'flags': ['prepare_members']}"
 ansible-playbook playbooks/mongodb.yml -e "{'flags': ['init_replica']}"
 ansible-playbook playbooks/mongodb.yml -e "{'flags': ['add_shard']}"
 ansible-playbook playbooks/mongodb.yml -e "{'flags': ['create_database']}"
@@ -78,11 +78,11 @@ ansible-playbook playbooks/mongodb.yml -e "{'flags': ['create_database']}"
 ## Flags and Variables
 | Flag                 | Purpose                                                                          |
 | -------------------- | -------------------------------------------------------------------------------- |
-| install_mongo        | Install mongo                                                                    |
-| start_mongo          | Start mongo                                                                      |
-| stop_mongo           | Stop mongo                                                                       |
-| configure_mongo      | Basic configuration of each mongo host. Removes existing configuration files     |
-| reset_storage        | Reset existing mongodb data directories and logs                                 |
+| install_mongo        | Installs mongo packages                                                          |
+| start_mongo          | Starts mongo database and/or server                                              |
+| stop_mongo           | Stop mongo database and/or server                                                |
+| configure_mongo      | Configure mongo                                                                  |
+| prepare_members      | Prepares the mongodb sharded cluster members                                     |
 | init_replica         | Initialize the replica set configuration                                         |
 | create_admin         | Creates the admin user                                                           |
 | add_shard            | Add a replica set of a shard server to the cluster of shard servers              |
@@ -115,7 +115,7 @@ vars:
   roles:
     - { role: 123mwanjemike.mongodb, flags: ['install_mongo'] }
     - { role: 123mwanjemike.mongodb, flags: ['configure_mongo'] }
-    - { role: 123mwanjemike.mongodb, flags: ['reset_storage'] } # Destructive for existing installation!
+    - { role: 123mwanjemike.mongodb, flags: ['prepare_members'] } # Destructive for existing installation!
     - { role: 123mwanjemike.mongodb, flags: ['init_replica'] }
     - { role: 123mwanjemike.mongodb, flags: ['add_shard'] }
     - { role: 123mwanjemike.mongodb, flags: ['create_database'] }
