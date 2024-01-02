@@ -1,21 +1,21 @@
 ---
-- name: Prepare Variables
+- name: Prepare variables
   include_tasks: prep_vars.yml
   when: cluster_role is defined
 
-- name: Install Packages
+- name: Install packages
   include_tasks: install_packages.yml
   when: ((['install'] | intersect(flags)) | length > 0)
 
-- name: Save Configuration
-  include_tasks: save_configuration.yml
-  when: ((['save_config'] | intersect(flags)) | length > 0)
-
-- name: Reset Storage
+- name: Reset storage
   include_tasks: reset_storage.yml
   when: ((['reset_storage'] | intersect(flags)) | length > 0)
 
-- name: Init Replica Set
+- name: Save configuration
+  include_tasks: save_configuration.yml
+  when: ((['save_config'] | intersect(flags)) | length > 0)
+
+- name: Init replica set
   include_tasks: init_replica_set.yml
   when: ((['init_replica_set'] | intersect(flags)) | length > 0)
 
@@ -23,10 +23,10 @@
   include_tasks: create_admin.yml
   when: ((['create_admin'] | intersect(flags)) | length > 0)
 
-- name: Add Replica Set to Cluster
-  include_tasks: add_shard_to_cluster.yml
-  when: ((['add_shard_to_cluster'] | intersect(flags)) | length > 0)
+- name: Add shard to cluster
+  include_tasks: add_shard.yml
+  when: ((['add_shard'] | intersect(flags)) | length > 0)
 
-- name: Create Database
+- name: Create database
   include_tasks: create_database.yml
   when: ((['create_database'] | intersect(flags)) | length > 0)

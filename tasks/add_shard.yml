@@ -1,8 +1,8 @@
 ---
-- name: Save the add_shard_to_cluster script
+- name: Save the shard_add script
   template:
-    src: templates/add_shard_to_cluster.js.j2
-    dest: /tmp/add_shard_to_cluster.js
+    src: templates/shard_add.js.j2
+    dest: /tmp/shard_add.js
   run_once: true
 
 - name: Change mongodb file permissions
@@ -11,12 +11,12 @@
     owner: mongodb
     group: mongodb
 
-- name: Run the add_shard_to_cluster script
+- name: Run the shard_add script
   shell: >
     mongosh
     --host {{ ansible_fqdn }}
     --port {{ rs_port }}
-    < /tmp/add_shard_to_cluster.js
+    < /tmp/shard_add.js
   run_once: true
   register: result
   until: result.rc == 0
