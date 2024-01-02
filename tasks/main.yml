@@ -1,32 +1,40 @@
 ---
-- name: Prepare Variables
-  include_tasks: prep_vars.yml
-  when: cluster_role is defined
+- name: Install mongo packages
+  include_tasks: install_mongo.yml
+  when: ((['install_mongo'] | intersect(flags)) | length > 0)
 
-- name: Install Packages
-  include_tasks: install_packages.yml
-  when: ((['install'] | intersect(flags)) | length > 0)
-
-- name: Save Configuration
+- name: Configure mongo
   include_tasks: save_configuration.yml
-  when: ((['save_config'] | intersect(flags)) | length > 0)
+  when: ((['configure_mongo'] | intersect(flags)) | length > 0)
 
-- name: Reset Storage
-  include_tasks: reset_storage.yml
-  when: ((['reset_storage'] | intersect(flags)) | length > 0)
+- name: Start the mongo service
+  include_tasks: start_mongo.yml
+  when: ((['start_mongo'] | intersect(flags)) | length > 0)
 
-- name: Init Replica Set
-  include_tasks: init_replica_set.yml
-  when: ((['init_replica_set'] | intersect(flags)) | length > 0)
+- name: Stop the mongo service
+  include_tasks: stop_mongo.yml
+  when: ((['stop_mongo'] | intersect(flags)) | length > 0)
+
+- name: Clear all sharded cluster logs
+  include_tasks: clear_logs.yml
+  when: ((['clear_logs'] | intersect(flags)) | length > 0)
+
+- name: Prepare all cluster members
+  include_tasks: prepare_members.yml
+  when: ((['prepare_members'] | intersect(flags)) | length > 0)
+
+- name: Init replica set
+  include_tasks: init_replica.yml
+  when: ((['init_replica'] | intersect(flags)) | length > 0)
 
 - name: Create admin user
   include_tasks: create_admin.yml
   when: ((['create_admin'] | intersect(flags)) | length > 0)
 
-- name: Add Replica Set to Cluster
-  include_tasks: add_shard_to_cluster.yml
-  when: ((['add_shard_to_cluster'] | intersect(flags)) | length > 0)
+- name: Add shard to cluster
+  include_tasks: add_shard.yml
+  when: ((['add_shard'] | intersect(flags)) | length > 0)
 
-- name: Create Database
+- name: Create database
   include_tasks: create_database.yml
   when: ((['create_database'] | intersect(flags)) | length > 0)

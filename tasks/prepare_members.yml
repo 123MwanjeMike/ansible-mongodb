@@ -1,31 +1,8 @@
 ---
-- name: kill logs
-  include_tasks: kill_logs.yml
-
 - name: Status of data directory
   stat:
     path: "{{ mount_base }}"
   register: stat_mnt
-
-- name: Delete storage_path directory
-  file:
-    path: "{{ storage_path }}"
-    state: absent
-
-- name: Delete mounted directory
-  file:
-    path: "{{ mount_path }}"
-    state: absent
-  when: stat_mnt.stat.isdir is defined and stat_mnt.stat.isdir
-
-- name: Create db dir, basic
-  file:
-    path: "{{ mount_path }}"
-    state: directory
-    owner: mongodb
-    group: mongodb
-    mode: 0755
-  when: stat_mnt.stat.isdir is not defined or not stat_mnt.stat.isdir
 
 - name: Create db dir, mounted
   file:
@@ -45,3 +22,19 @@
     group: mongodb
     mode: 0755
   when: stat_mnt.stat.isdir is defined and stat_mnt.stat.isdir
+
+- name: Create storage_path directory and set ownership
+  file:
+    path: "{{ storage_path }}"
+    state: directory
+    owner: mongodb
+    group: mongodb
+    mode: 0755
+
+- name: Copy mongo keyfile
+  copy:
+    src: "{{ keyfile_src }}"
+    dest: "{{ keyfile_path }}"
+    owner: mongodb
+    group: mongodb        
+    mode: 0400

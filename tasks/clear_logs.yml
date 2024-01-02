@@ -1,5 +1,5 @@
 ---
-- name: Kill logs
+- name: Clear logs
   file:
     path: "{{ item }}"
     state: absent

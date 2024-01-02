@@ -5,7 +5,7 @@ storage_path: /srv/mongodb
 log_path: "/var/log/mongodb"
 log_file: "{{ log_path }}/mongodb.log"
 keyfile_src: ./keyfile
-keyfile_path: /srv/mongodb/mongodb-keyfile
+keyfile_path: "{{ storage_path }}/mongodb-keyfile"
 ports:
   router: 27017
   shard: 27018

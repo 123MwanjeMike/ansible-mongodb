@@ -1,4 +1,17 @@
 ---
+- name: Set the cfg_rs_servers variable
+  set_fact:
+    cfg_rs_servers: "{{ groups[cfg_server.group] | map('regex_replace', '$', ':{{ ports.config }}') | list }}"
+  when: cfg_server is defined and cfg_server.group is defined
+
+- name: Set config_db variable
+  set_fact:
+    config_db: "{{ cfg_server.name }}/{{ cfg_rs_servers | join(',') }}"
+
+- name: Set rs_port
+  set_fact:
+    rs_port: "{{ ports[cluster_role] }}"
+
 - name: Remove existing mongo config files
   file:
     dest: "{{ item.dest }}"
@@ -13,7 +26,7 @@
     - { dest: /etc/mongodb.conf }
     - { dest: /etc/mongod.conf }
     - { dest: /etc/mongos.conf }
-
+    
 - name: Put new mongo settings in place
   template:
     src: "{{ item.src }}"
