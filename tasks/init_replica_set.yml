@@ -49,6 +49,10 @@
   args:
     creates: "{{ log_path }}/rs_init.log"
 
+- name: Wait for changes to propagate
+  pause:
+    seconds: 5
+
 - name: Remove the init_replica_set.js script from remote tmp
   file:
     dest: /tmp/replica_set_init.js
