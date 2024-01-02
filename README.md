@@ -78,12 +78,14 @@ ansible-playbook playbooks/mongodb.yml -e "{'flags': ['create_database']}"
 ## Flags and Variables
 | Flag                 | Purpose                                                                          |
 | -------------------- | -------------------------------------------------------------------------------- |
-| install              | Install mongo packages                                                           |
+| install_mongo        | Install mongo                                                                    |
+| start_mongo          | Start mongo                                                                      |
+| stop_mongo           | Stop mongo                                                                       |
 | save_config          | Basic configuration of each mongo host. Removes existing configuration files     |
 | reset_storage        | Reset existing mongodb data directories and logs                                 |
-| init_replica     | Initialize the replica set configuration                                         |
+| init_replica         | Initialize the replica set configuration                                         |
 | create_admin         | Creates the admin user                                                           |
-| add_shard | Add a replica set of a shard server to the cluster of shard servers              |
+| add_shard            | Add a replica set of a shard server to the cluster of shard servers              |
 | create_database      | Do an initial database creation, with username and password                      |
 
 ```yaml
@@ -111,7 +113,7 @@ vars:
     adminPass: ''
 
   roles:
-    - { role: 123mwanjemike.mongodb, flags: ['install'] }
+    - { role: 123mwanjemike.mongodb, flags: ['install_mongo'] }
     - { role: 123mwanjemike.mongodb, flags: ['save_config'] } # Destructive for existing installation! 
     - { role: 123mwanjemike.mongodb, flags: ['reset_storage'] } # Destructive for existing installation!
     - { role: 123mwanjemike.mongodb, flags: ['init_replica'] }

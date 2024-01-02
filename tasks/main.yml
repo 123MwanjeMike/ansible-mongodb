@@ -11,9 +11,9 @@
   include_tasks: stop_mongo.yml
   when: ((['stop_mongo'] | intersect(flags)) | length > 0)
 
-- name: Install packages
-  include_tasks: install_packages.yml
-  when: ((['install'] | intersect(flags)) | length > 0)
+- name: Install mongo packages
+  include_tasks: install_mongo.yml
+  when: ((['install_mongo'] | intersect(flags)) | length > 0)
 
 - name: Reset storage
   include_tasks: reset_storage.yml
