@@ -1,22 +1,9 @@
 ---
-- name: Stat for MongoDB services
-  vars:
-    services:
-      - mongodb
-      - mongod
-      - mongos
-  loop: "{{ services }}"
-  loop_control:
-    loop_var: service_name
-  stat:
-    path: "/etc/systemd/system/{{ service_name }}.service"
-  register: stat_result
+- name: Stop mongos if host is running mongos
+  shell: if [ -e "/etc/systemd/system/mongos.service" ]; then systemctl stop mongos; fi
 
-- name: Stop the daemon service
-  service:
-    name: "mongod"
-    state: stopped
-  when: "'mongod' in stat_result.results | map(attribute='item.service_name') and not item.stat_result.stat.exists"
-  loop: "{{ services }}"
-  loop_control:
-    loop_var: item
+- name: Stop mongod if host is running mongod
+  shell: |
+    if [ -e "/etc/systemd/system/mongos.service" ] || [ -e "/etc/systemd/system/mongod.service" ]; then
+      systemctl stop mongod
+    fi
