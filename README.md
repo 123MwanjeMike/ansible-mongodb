@@ -67,8 +67,8 @@ You can use a system of flags and tags that allow the calling playbook to specif
 For example:
 
 ```bash
-ansible-playbook playbooks/mongodb.yml -e "{'flags': ['install']}"
-ansible-playbook playbooks/mongodb.yml -e "{'flags': ['save_config']}"
+ansible-playbook playbooks/mongodb.yml -e "{'flags': ['install_mongo']}"
+ansible-playbook playbooks/mongodb.yml -e "{'flags': ['configure_mongo']}"
 ansible-playbook playbooks/mongodb.yml -e "{'flags': ['prepare_members']}"
 ansible-playbook playbooks/mongodb.yml -e "{'flags': ['init_replica']}"
 ansible-playbook playbooks/mongodb.yml -e "{'flags': ['add_shard']}"
