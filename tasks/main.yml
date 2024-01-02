@@ -15,6 +15,10 @@
   include_tasks: stop_mongo.yml
   when: ((['stop_mongo'] | intersect(flags)) | length > 0)
 
+- name: Clear all sharded cluster logs
+  include_tasks: clear_logs.yml
+  when: ((['clear_logs'] | intersect(flags)) | length > 0)
+
 - name: Prepare all cluster members
   include_tasks: prepare_members.yml
   when: ((['prepare_members'] | intersect(flags)) | length > 0)

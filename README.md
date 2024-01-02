@@ -87,6 +87,7 @@ ansible-playbook playbooks/mongodb.yml -e "{'flags': ['create_database']}"
 | create_admin         | Creates the admin user                                                           |
 | add_shard            | Add a replica set of a shard server to the cluster of shard servers              |
 | create_database      | Do an initial database creation, with username and password                      |
+| clear_logs           | Clears all the sharded cluster logs                                              |
 
 ```yaml
 vars:
