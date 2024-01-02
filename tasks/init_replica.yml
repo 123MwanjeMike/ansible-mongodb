@@ -16,13 +16,6 @@
     src: templates/replica_init.js.j2
     dest: /tmp/replica_init.js
 
-- name: Start the mongo services
-  include_tasks: start_mongo.yml
-
-- name: Wait for services to start
-  pause:
-    seconds: 5
-
 - name: Run the replica_init.js script
   shell: mongosh --port {{ rs_port }} < /tmp/replica_init.js > {{ log_path }}/rs_init.log
   register: res_rsi
