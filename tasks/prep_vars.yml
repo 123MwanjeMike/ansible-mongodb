@@ -1,12 +1,8 @@
 ---
-- name: Set the rs group name for cfg_server
-  set_fact:
-    cfg_server_group: "{{ cfg_server.group }}"
-  when: cfg_server is defined and cfg_server.group is defined
-
 - name: Set the cfg_rs_servers variable
   set_fact:
-    cfg_rs_servers: "{{ groups[cfg_server_group] | map('regex_replace', '$', ':{{ ports.config }}') | list }}"
+    cfg_rs_servers: "{{ groups[cfg_server.group] | map('regex_replace', '$', ':{{ ports.config }}') | list }}"
+  when: cfg_server is defined and cfg_server.group is defined
 
 - name: Set config_db variable
   set_fact:
