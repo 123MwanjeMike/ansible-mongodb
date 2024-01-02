@@ -16,8 +16,8 @@
   when: ((['save_config'] | intersect(flags)) | length > 0)
 
 - name: Init replica set
-  include_tasks: init_replica_set.yml
-  when: ((['init_replica_set'] | intersect(flags)) | length > 0)
+  include_tasks: init_replica.yml
+  when: ((['init_replica'] | intersect(flags)) | length > 0)
 
 - name: Create admin user
   include_tasks: create_admin.yml

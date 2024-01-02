@@ -19,7 +19,7 @@
   set_fact:
     configuring_replica_set: true
 
-- name: Upload init_replica_set config file
+- name: Upload mongod config file
   template:
     src: templates/mongod.conf.j2
     dest: /etc/mongod.conf
@@ -27,10 +27,10 @@
     group: root
     mode: u=rw,g=r,o=r
 
-- name: Save the init_replica_set.js template to remote tmp
+- name: Save the replica_init.js template to remote tmp
   template:
-    src: templates/replica_set_init.js.j2
-    dest: /tmp/replica_set_init.js
+    src: templates/replica_init.js.j2
+    dest: /tmp/replica_init.js
 
 - name: Start the appropriate services
   include_tasks: service_start.yml
@@ -39,8 +39,8 @@
   pause:
     seconds: 5
 
-- name: Run the init_replica_set.js script
-  shell: mongosh --port {{ rs_port }} < /tmp/replica_set_init.js > {{ log_path }}/rs_init.log
+- name: Run the replica_init.js script
+  shell: mongosh --port {{ rs_port }} < /tmp/replica_init.js > {{ log_path }}/rs_init.log
   register: res_rsi
   until: res_rsi.rc == 0
   retries: 3
@@ -53,9 +53,9 @@
   pause:
     seconds: 5
 
-- name: Remove the init_replica_set.js script from remote tmp
+- name: Remove the replica_init.js script from remote tmp
   file:
-    dest: /tmp/replica_set_init.js
+    dest: /tmp/replica_init.js
     state: absent
 
 - name: No longer configuring the replica set
