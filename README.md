@@ -81,7 +81,7 @@ ansible-playbook playbooks/mongodb.yml -e "{'flags': ['create_database']}"
 | install_mongo        | Install mongo                                                                    |
 | start_mongo          | Start mongo                                                                      |
 | stop_mongo           | Stop mongo                                                                       |
-| save_config          | Basic configuration of each mongo host. Removes existing configuration files     |
+| configure_mongo      | Basic configuration of each mongo host. Removes existing configuration files     |
 | reset_storage        | Reset existing mongodb data directories and logs                                 |
 | init_replica         | Initialize the replica set configuration                                         |
 | create_admin         | Creates the admin user                                                           |
@@ -114,7 +114,7 @@ vars:
 
   roles:
     - { role: 123mwanjemike.mongodb, flags: ['install_mongo'] }
-    - { role: 123mwanjemike.mongodb, flags: ['save_config'] } # Destructive for existing installation! 
+    - { role: 123mwanjemike.mongodb, flags: ['configure_mongo'] }
     - { role: 123mwanjemike.mongodb, flags: ['reset_storage'] } # Destructive for existing installation!
     - { role: 123mwanjemike.mongodb, flags: ['init_replica'] }
     - { role: 123mwanjemike.mongodb, flags: ['add_shard'] }
