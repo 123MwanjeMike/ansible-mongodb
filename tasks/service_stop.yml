@@ -1,36 +1,22 @@
 ---
-- name: stat for mongodb
+- name: Stat for MongoDB services
+  vars:
+    services:
+      - mongodb
+      - mongod
+      - mongos
+  loop: "{{ services }}"
+  loop_control:
+    loop_var: service_name
   stat:
-    path: /etc/systemd/system/mongodb.service
-  register: stat_db
-
-- name: stat for mongod
-  stat:
-    path: /etc/systemd/system/mongod.service
-  register: stat_d
-
-- name: stat for mongos
-  stat:
-    path: /etc/systemd/system/mongos.service
-  register: stat_s
+    path: "/etc/systemd/system/{{ service_name }}.service"
+  register: stat_result
 
 - name: Stop the daemon service
   service:
-    name: mongod
+    name: "mongod"
     state: stopped
-  when:
-    - stat_db.stat.exists
-
-- name: Stop the daemon service
-  service:
-    name: mongod
-    state: stopped
-  when:
-    - stat_d.stat.exists
-
-- name: Stop the shard service
-  service:
-    name: mongos
-    state: stopped
-  when:
-    - stat_s.stat.exists
+  when: "'mongod' in stat_result.results | map(attribute='item.service_name') and not item.stat_result.stat.exists"
+  loop: "{{ services }}"
+  loop_control:
+    loop_var: item
