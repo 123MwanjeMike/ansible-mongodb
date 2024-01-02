@@ -3,8 +3,12 @@
   include_tasks: prep_vars.yml
   when: cluster_role is defined
 
+- name: Start the mongo service
+  include_tasks: start_mongo.yml
+  when: ((['start_mongo'] | intersect(flags)) | length > 0)
+
 - name: Stop the mongo service
-  include_tasks: service_stop.yml
+  include_tasks: stop_mongo.yml
   when: ((['stop_mongo'] | intersect(flags)) | length > 0)
 
 - name: Install packages
