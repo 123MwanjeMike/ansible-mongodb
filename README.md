@@ -82,7 +82,7 @@ ansible-playbook playbooks/mongodb.yml -e "{'flags': ['create_database']}"
 | start_mongo          | Starts mongo database and/or server                                              |
 | stop_mongo           | Stop mongo database and/or server                                                |
 | configure_mongo      | Configure mongo                                                                  |
-| prepare_members      | Prepares the mongodb sharded cluster members                                     |
+| prepare_members      | Prepares the mongodb sharded cluster members. **Deletes existing mongodb data!** |
 | init_replica         | Initialize the replica set configuration                                         |
 | create_admin         | Creates the admin user                                                           |
 | add_shard            | Add a replica set of a shard server to the cluster of shard servers              |
@@ -116,7 +116,7 @@ vars:
   roles:
     - { role: 123mwanjemike.mongodb, flags: ['install_mongo'] }
     - { role: 123mwanjemike.mongodb, flags: ['configure_mongo'] }
-    - { role: 123mwanjemike.mongodb, flags: ['prepare_members'] } # Destructive for existing installation!
+    - { role: 123mwanjemike.mongodb, flags: ['prepare_members'] }
     - { role: 123mwanjemike.mongodb, flags: ['init_replica'] }
     - { role: 123mwanjemike.mongodb, flags: ['add_shard'] }
     - { role: 123mwanjemike.mongodb, flags: ['create_database'] }

@@ -1,8 +1,19 @@
 ---
-- name: Status of data directory
+- name: Delete existing storage_path directory
+  file:
+    path: "{{ storage_path }}"
+    state: absent
+
+- name: Status  mounted data directory
   stat:
     path: "{{ mount_base }}"
   register: stat_mnt
+
+- name: Delete existing mounted directory
+  file:
+    path: "{{ mount_path }}"
+    state: absent
+  when: stat_mnt.stat.isdir is defined and stat_mnt.stat.isdir
 
 - name: Create db dir, mounted
   file:
@@ -23,7 +34,7 @@
     mode: 0755
   when: stat_mnt.stat.isdir is defined and stat_mnt.stat.isdir
 
-- name: Create storage_path directory and set ownership
+- name: Create new storage_path directory and set ownership
   file:
     path: "{{ storage_path }}"
     state: directory
