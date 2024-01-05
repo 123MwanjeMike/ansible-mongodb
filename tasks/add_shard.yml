@@ -1,4 +1,14 @@
 ---
+- name: Set the shard_servers variable
+  set_fact:
+    shard_servers: "{{ groups[new_shard.group] | map('regex_replace', '$', ':{{ ports.shard }}') | list }}"
+  when: new_shard is defined and new_shard.group is defined
+
+- name: Set new_shard_replicaset variable
+  set_fact:
+    new_shard_replicaset: "{{ new_shard.name }}/{{ shard_servers | join(',') }}"
+  when: new_shard is defined and new_shard.name is defined
+
 - name: Save the shard_add script
   template:
     src: templates/shard_add.js.j2
