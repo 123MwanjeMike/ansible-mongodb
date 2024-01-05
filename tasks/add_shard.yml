@@ -3,22 +3,15 @@
   template:
     src: templates/shard_add.js.j2
     dest: /tmp/shard_add.js
-  run_once: true
-
-- name: Change mongodb file permissions
-  file:
-    path: /var/lib/mongodb/
-    owner: mongodb
-    group: mongodb
 
 - name: Run the shard_add script
-  shell: >
-    mongosh
-    --port {{ rs_port }}
-    < /tmp/shard_add.js
-  run_once: true
+  shell: mongosh --port {{ rs_port }} < /tmp/shard_add.js >> {{ log_path }}/shard_add.log
   register: result
   until: result.rc == 0
   retries: 3
   delay: 3
-  when: cluster_role != 'router'
+
+- name: Remove the shard_add script
+  file:
+    path: /tmp/shard_add.js
+    state: absent
