@@ -23,7 +23,6 @@ replica_set:
   group: "my-cfg-servers" # group name for all servers in the replica set
 ```
 
-
 ### Roadmap
 **May 2023**
 - [x] Creates admin user
@@ -32,7 +31,7 @@ replica_set:
 **June 2023**
 - [x] Initiates the config replicaset(s)
 - [x] Can initiate a shard replicaset(s)
-- [ ] Adds the shard replicaset(s)
+- [x] Adds the shard replicaset(s)
 
 Host Definitions typically contain the following:
 
@@ -69,10 +68,14 @@ For example:
 ```bash
 ansible-playbook playbooks/mongodb.yml -e "{'flags': ['install_mongo']}"
 ansible-playbook playbooks/mongodb.yml -e "{'flags': ['configure_mongo']}"
+ansible-playbook playbooks/mongodb.yml -e "{'flags': ['clear_logs']}"
 ansible-playbook playbooks/mongodb.yml -e "{'flags': ['prepare_members']}"
+ansible-playbook playbooks/mongodb.yml -e "{'flags': ['start_mongo']}"
 ansible-playbook playbooks/mongodb.yml -e "{'flags': ['init_replica']}"
+ansible-playbook playbooks/mongodb.yml -e "{'flags': ['create_admin']}"
 ansible-playbook playbooks/mongodb.yml -e "{'flags': ['add_shard']}"
 ansible-playbook playbooks/mongodb.yml -e "{'flags': ['create_database']}"
+ansible-playbook playbooks/mongodb.yml -e "{'flags': ['stop_mongo']}"
 ```
 
 ## Flags and Variables
@@ -85,48 +88,46 @@ ansible-playbook playbooks/mongodb.yml -e "{'flags': ['create_database']}"
 | prepare_members      | Prepares the mongodb sharded cluster members. **Deletes existing mongodb data!** |
 | init_replica         | Initialize the replica set configuration                                         |
 | create_admin         | Creates the admin user                                                           |
-| add_shard            | Add a replica set of a shard server to the cluster of shard servers              |
+| add_shard            | Add a shard replicaset server to the sharded cluster                             |
 | create_database      | Do an initial database creation, with username and password                      |
 | clear_logs           | Clears all the sharded cluster logs                                              |
 
-```yaml
-vars:
-  flags: ["install"]
-  new_shard:
-    name: # Name of the replica set to add to the config server
-    server: # One of the members of the new replicate set to add
-```
 
 ###### Sample playbook
 ```yaml
 - hosts: all
   vars:
-    auth_db: ""
-    adminUser: ""
-    adminPass: ""
-    tgt_db: ""
-    userName: ""
-    userPass: ""
-    roles: ["readWrite", "userAdmin"]
+    auth_db: "" # Optional: default is admin
 
     # For when initializing the replica set
-    adminUser: ''
-    adminPass: ''
+    adminUser: ""
+    adminPass: ""
+
+    # For when adding a shard replicaset
+    new_shard:
+      name: "shard-0" # shard name
+      group: "shard_0" # group name from inventories/hosts
+
+    # For when creating the database
+    tgt_db: ""
+    roles: ["readWrite", "userAdmin"]
+
+    # For when creating the normal user
+    userName: ""
+    userPass: ""
 
   roles:
-    - { role: 123mwanjemike.mongodb, flags: ['install_mongo'] }
-    - { role: 123mwanjemike.mongodb, flags: ['configure_mongo'] }
-    - { role: 123mwanjemike.mongodb, flags: ['prepare_members'] }
-    - { role: 123mwanjemike.mongodb, flags: ['init_replica'] }
-    - { role: 123mwanjemike.mongodb, flags: ['add_shard'] }
-    - { role: 123mwanjemike.mongodb, flags: ['create_database'] }
+    - { role: 123mwanjemike.ansible_mongodb, flags: ["install_mongo"] }
+    - { role: 123mwanjemike.ansible_mongodb, flags: ["configure_mongo"] }
+    - { role: 123mwanjemike.ansible_mongodb, flags: ["clear_logs"] }
+    - { role: 123mwanjemike.ansible_mongodb, flags: ["prepare_members"] }
+    - { role: 123mwanjemike.ansible_mongodb, flags: ["start_mongo"] }
+    - { role: 123mwanjemike.ansible_mongodb, flags: ["init_replica"], when: cluster_role != 'router' }
+    - { role: 123mwanjemike.ansible_mongodb, flags: ["create_admin"], when: cluster_role != 'router' }
+    - { role: 123mwanjemike.ansible_mongodb, flags: ["add_shard"], when: cluster_role == 'router' }
+    - { role: 123mwanjemike.ansible_mongodb, flags: ["stop_mongo"] }
 ```
 
-## Linting
-```bash
-yamllint -c yamllint.yaml .
-ansible-lint .
-```
 
 #### References
   - [Security Hardening](https://docs.mongodb.com/manual/core/security-hardening/)
