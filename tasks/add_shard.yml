@@ -14,7 +14,6 @@
 - name: Run the shard_add script
   shell: >
     mongosh
-    --host {{ ansible_fqdn }}
     --port {{ rs_port }}
     < /tmp/shard_add.js
   run_once: true

@@ -5,7 +5,7 @@
     dest: /tmp/create_database.js
 
 - name: Run the create_database.js script
-  shell: mongosh --host {{ ansible_fqdn }} --port {{ rs_port }} < /tmp/create_database.js
+  shell: mongosh --port {{ rs_port }} < /tmp/create_database.js
   when: true
 
 - name: Remove the create_database script
