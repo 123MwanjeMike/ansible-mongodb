@@ -49,3 +49,9 @@
     owner: mongodb
     group: mongodb        
     mode: 0400
+
+- name: Change mongodb file permissions
+  file:
+    path: /var/lib/mongodb/
+    owner: mongodb
+    group: mongodb

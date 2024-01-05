@@ -27,7 +27,6 @@ systemLog:
         verbosity: 0
 
 {% if cluster_role == 'shard' or cluster_role == 'config' or cluster_role == 'replicaSet' %}
-# Where and how to store data.
 storage:
   dbPath: {{ storage_path }}
   journal:
@@ -63,11 +62,3 @@ security:
 net:
   port: {{ rs_port }}
   bindIp: 127.0.0.1,{{ ansible_host }}
-
-{% if cluster_role == 'config' or cluster_role == 'shard' %}
-{% if operation_profiling is defined %}
-operationProfiling:
-  slowOpThresholdMs: {{ operation_profiling.threshold }}
-  mode: {{ operation_profiling.mode }}
-{% endif %}
-{% endif %}

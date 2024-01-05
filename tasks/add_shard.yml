@@ -1,24 +1,27 @@
 ---
+- name: Set the shard_servers variable
+  set_fact:
+    shard_servers: "{{ groups[new_shard.group] | map('regex_replace', '$', ':{{ ports.shard }}') | list }}"
+  when: new_shard is defined and new_shard.group is defined
+
+- name: Set new_shard_replicaset variable
+  set_fact:
+    new_shard_replicaset: "{{ new_shard.name }}/{{ shard_servers | join(',') }}"
+  when: new_shard is defined and new_shard.name is defined
+
 - name: Save the shard_add script
   template:
     src: templates/shard_add.js.j2
     dest: /tmp/shard_add.js
-  run_once: true
-
-- name: Change mongodb file permissions
-  file:
-    path: /var/lib/mongodb/
-    owner: mongodb
-    group: mongodb
 
 - name: Run the shard_add script
-  shell: >
-    mongosh
-    --port {{ rs_port }}
-    < /tmp/shard_add.js
-  run_once: true
+  shell: mongosh --port {{ rs_port }} < /tmp/shard_add.js >> {{ log_path }}/shard_add.log
   register: result
   until: result.rc == 0
   retries: 3
   delay: 3
-  when: cluster_role != 'router'
+
+- name: Remove the shard_add script
+  file:
+    path: /tmp/shard_add.js
+    state: absent
