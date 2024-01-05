@@ -18,9 +18,9 @@ opt.configsvr = true;
 
 {% for hn in groups[replica_set.group] %}
   {% if loop.first %}
-    opt.members.push({_id: {{ loop.index0 }}, host: '{{ hostvars[ hn ].ansible_fqdn }}:{{ rs_port }}', priority: 2 });
+    opt.members.push({_id: {{ loop.index0 }}, host: '{{ hostvars[ hn ].inventory_hostname }}:{{ rs_port }}', priority: 2 });
   {% else %}
-    opt.members.push({_id: {{ loop.index0 }}, host: '{{ hostvars[ hn ].ansible_fqdn }}:{{ rs_port }}'});
+    opt.members.push({_id: {{ loop.index0 }}, host: '{{ hostvars[ hn ].inventory_hostname }}:{{ rs_port }}'});
   {% endif %}
 {% endfor %}
 
