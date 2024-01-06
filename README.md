@@ -1,73 +1,84 @@
-##### Note
-This ansible role was originally templated from [isaackehle](https://github.com/isaackehle)'s work [here](https://github.com/isaackehle/ansible-mongodb).
-The reason for a different role is that this one is intended to be more light weight and thus prune's some functionalities from the original which some users may still need. These include:
-- [x509 security](https://www.mongodb.com/docs/manual/core/security-x.509/)
-
-This set up implements authentication using a mongodb keyfile and is thus ideal to have the servers runing in a VPC.
-
 # Ansible Role - mongodb
 
-Configure the components of a MongoDB Cluster
-Available on [Ansible Galaxy](https://galaxy.ansible.com/123mwanjemike/ansible_mongodb)
+Configure the components of a MongoDB Cluster. This role is available [here on Ansible Galaxy](https://galaxy.ansible.com/123mwanjemike/ansible_mongodb)
 
-## Variables
-Required definitions are as follows:
+#### Required ansible host/group variables
 
-```yaml
-cfg_server:
-  name: "my-cfg" # (Required)
-  group: "my-cfg-servers" # (Required) Always pass in the group id used for the config servers
-
-replica_set:
-  name: "my-cfg" # name of the replica set for the config server (prefix of fqdn)
-  group: "my-cfg-servers" # group name for all servers in the replica set
-```
-
-Host Definitions typically contain the following:
-
-### Replica Set Only
-```yaml
-cluster_role: "replicaSet"
-```
-
-### Router Server
-```yaml
-cluster_role: "router"
-```
-
-### Config Server
+For each host/group, the `cluster_role`: Which is either of replicaSet, router, config or shard.
+The `replica_set` is also required for host groups that are in a replica set and is a dictionary with the following keys:
+- name: The name of the replica set
+- group: The name of the host group in the inventory that the replica set belongs to
+For example:
 ```yaml
 cluster_role: "config"
 replica_set:
-  name: "my-cfg" # name of the replica set for the config server (prefix of fqdn)
-  group: "my-cfg-servers" # group name for all servers in the replica set
+    name: "cfgsvr"
+    group: "config_servers"
 ```
 
-### Shard Server
+#### Sample inventory
 ```yaml
-cluster_role: "shard"
-replica_set:
-  name: "db-data" # name of the replica set for the shard server (prefix of fqdn)
-  group: "db-data-servers" # group name for all servers in the replica set
+all:
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+  children:            
+    mongo_cluster:
+      children:
+        mongos_routers:
+          hosts:
+            mongos-router-0.europe-north1-b.c.oceanic-muse-408212.internal:
+          vars:
+            cluster_role: "router"
+        config_servers:
+          hosts:
+            mongod-cfgsvr-0.europe-north1-b.c.oceanic-muse-408212.internal:
+            mongod-cfgsvr-1.europe-north1-c.c.oceanic-muse-408212.internal:
+            mongod-cfgsvr-2.europe-north1-a.c.oceanic-muse-408212.internal:
+          vars:
+            cluster_role: "config"
+            replica_set:
+              name: "cfgsvr"
+              group: "config_servers"
+        shard_0:
+          hosts:
+            mongod-shard-0-0.europe-north1-b.c.oceanic-muse-408212.internal:
+            mongod-shard-0-1.europe-north1-c.c.oceanic-muse-408212.internal:
+            mongod-shard-0-2.europe-north1-a.c.oceanic-muse-408212.internal:
+          vars:
+            cluster_role: "shard"
+            replica_set:
+              name: "shard-0"
+              group: "shard_0"
+        plain_replica_set:
+          hosts:
+            mongod-rs0-0.europe-north1-b.c.oceanic-muse-408212.internal:
+            mongod-rs0-1.europe-north1-c.c.oceanic-muse-408212.internal:
+            mongod-rs0-0-2.europe-north1-a.c.oceanic-muse-408212.internal:
+          vars:
+            cluster_role: "replicaSet"
+            replica_set:
+              name: "rs0"
+              group: "plain_replica_set"
 ```
 
+**NOTE**: It is important that the hostnames are the FQDNs of the hosts as shown in the example above.
 
-### Flags and Variables
+#### Flags and Variables
 | Flag            | Variables                         | Description                                                                      |
 | --------------- | --------------------------------- |--------------------------------------------------------------------------------- |
 | install_mongo   | none                              | Installs mongo packages                                                          |
 | start_mongo     | none                              | Starts mongo database and/or server                                              |
 | stop_mongo      | none                              | Stops mongo database and/or server                                               |
-| configure_mongo | none                              | Configures mongo                                                                 |
+| configure_mongo | cfg_server                        | Configures mongo                                                                 |
 | prepare_members | keyfile_src                       | Prepares the mongodb sharded cluster members. **Deletes existing mongodb data!** |
-| init_replica    | none                              | Initializes the replica set configuration                                        |
+| init_replica    | none                              | Creates a mongodb replica set                                                    |
 | create_admin    | adminUser, adminPass              | Creates the admin user                                                           |
 | add_shard       | new_shard                         | Adds a shard replicaset server to the sharded cluster                            |
 | create_database | tgt_db, roles, userName, userPass | Creates a database with sharding enabled. Creates respective user if not present |
 | clear_logs      | none                              | Clears all the sharded cluster logs                                              |
 
 
-###### Sample playbook
+##### Sample playbook
 ```yaml
 - hosts: all
   vars:
@@ -86,13 +97,16 @@ replica_set:
     userPass: ""
     # Used to prepare the members of the sharded cluster
     keyfile_src: "./keyfile" # Path to the keyfile on the ansible controller
+    # Used to configure the cluster members
+    cfg_server:
+      name: "cfgsvr"
+      group: "config_servers"
 
-  # Generate a keyfile on the ansible controller
+  # Generate a keyfile
   pre_tasks:
     - name: Generate random string with OpenSSL on ansible controller
       shell: openssl rand -base64 756 > 
       delegate_to: localhost
-      run_once: true
       args:
         creates: keyfile
 
@@ -128,11 +142,6 @@ replica_set:
     - { role: 123mwanjemike.ansible_mongodb, flags: ["stop_mongo"] }
 ```
 
-#### Resources
-  - [Security Hardening](https://docs.mongodb.com/manual/core/security-hardening/)
-  - [Deploy Shard Cluster](https://docs.mongodb.com/manual/tutorial/deploy-shard-cluster/)
-  - [Add Shards to Cluster](https://docs.mongodb.com/manual/tutorial/add-shards-to-shard-cluster)
-  - [Authorization](https://docs.mongodb.com/manual/core/authorization/)
-  - [Internal Auth](https://docs.mongodb.com/manual/core/security-internal-authentication/)
-  - [Enforce Keyfile Access Control](https://docs.mongodb.com/manual/tutorial/enforce-keyfile-access-control-in-existing-replica-set/)
-  - [Deploy Replica Set w/ Keyfill Access Control](https://docs.mongodb.com/v3.2/tutorial/deploy-replica-set-with-keyfile-access-control/)
+###### Notes:
+1. The setup is best suited for implementation behind a VPC and thus implements authentication using a keyfile. If you need to use x509 certificates, you can use the [x509 security](https://www.mongodb.com/docs/manual/core/security-x.509/) documentation to guide you on how to implement it.
+2. This ansible role was originally templated from [this role](https://galaxy.ansible.com/ui/standalone/roles/isaackehle/ansible_mongodb/). This particular one is however intended to be light weight and easy to use and thus users that may need a more sophisticated setup can still checkout the original role.
