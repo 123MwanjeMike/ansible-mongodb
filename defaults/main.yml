@@ -1,5 +1,0 @@
----
-flags:
-  - none
-mongo_version: "7.0"
-auth_db:       "admin"
