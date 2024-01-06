@@ -23,14 +23,10 @@ systemLog:
       verbosity: 0
     storage:
       verbosity: 0
-      journal:
-        verbosity: 0
 
 {% if cluster_role == 'shard' or cluster_role == 'config' or cluster_role == 'replicaSet' %}
 storage:
   dbPath: {{ storage_path }}
-  journal:
-    enabled: true
 {% endif %}
 
 {% if replica_set is defined and replica_set.name is defined %}
