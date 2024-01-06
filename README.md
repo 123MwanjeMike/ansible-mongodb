@@ -52,27 +52,26 @@ replica_set:
 ```
 
 
-## Flags and Variables
-| Flag                 | Purpose                                                                          |
-| -------------------- | -------------------------------------------------------------------------------- |
-| install_mongo        | Installs mongo packages                                                          |
-| start_mongo          | Starts mongo database and/or server                                              |
-| stop_mongo           | Stops mongo database and/or server                                               |
-| configure_mongo      | Configures mongo                                                                 |
-| prepare_members      | Prepares the mongodb sharded cluster members. **Deletes existing mongodb data!** |
-| init_replica         | Initializes the replica set configuration                                        |
-| create_admin         | Creates the admin user                                                           |
-| add_shard            | Adds a shard replicaset server to the sharded cluster                            |
-| create_database      | Creates a database with sharding enabled. Creates respective user if not present |
-| clear_logs           | Clears all the sharded cluster logs                                              |
+### Flags and Variables
+| Flag            | Variables                         | Description                                                                      |
+| --------------- | --------------------------------- |--------------------------------------------------------------------------------- |
+| install_mongo   | none                              | Installs mongo packages                                                          |
+| start_mongo     | none                              | Starts mongo database and/or server                                              |
+| stop_mongo      | none                              | Stops mongo database and/or server                                               |
+| configure_mongo | none                              | Configures mongo                                                                 |
+| prepare_members | keyfile_src                       | Prepares the mongodb sharded cluster members. **Deletes existing mongodb data!** |
+| init_replica    | none                              | Initializes the replica set configuration                                        |
+| create_admin    | adminUser, adminPass              | Creates the admin user                                                           |
+| add_shard       | new_shard                         | Adds a shard replicaset server to the sharded cluster                            |
+| create_database | tgt_db, roles, userName, userPass | Creates a database with sharding enabled. Creates respective user if not present |
+| clear_logs      | none                              | Clears all the sharded cluster logs                                              |
 
 
 ###### Sample playbook
 ```yaml
 - hosts: all
   vars:
-    auth_db: "" # Optional: default is admin
-    # Used to initialize the replica set
+    # Used to create admin user
     adminUser: ""
     adminPass: ""
     # Used to add a shard replicaset
@@ -85,6 +84,17 @@ replica_set:
     # Used to create a basic user for the database instance above
     userName: ""
     userPass: ""
+    # Used to prepare the members of the sharded cluster
+    keyfile_src: "./keyfile" # Path to the keyfile on the ansible controller
+
+  # Generate a keyfile on the ansible controller
+  pre_tasks:
+    - name: Generate random string with OpenSSL on ansible controller
+      shell: openssl rand -base64 756 > 
+      delegate_to: localhost
+      run_once: true
+      args:
+        creates: keyfile
 
   roles:
     - { role: 123mwanjemike.ansible_mongodb, flags: ["install_mongo"] }
@@ -101,7 +111,6 @@ replica_set:
         role: 123mwanjemike.ansible_mongodb,
         flags: ["create_admin"],
         when: cluster_role != 'router',
-        # delegate to the first host in the replica set
         delegate_to: "{{ groups[replica_set.group] | first }}",
       }
     - {
@@ -119,8 +128,7 @@ replica_set:
     - { role: 123mwanjemike.ansible_mongodb, flags: ["stop_mongo"] }
 ```
 
-
-#### References
+#### Resources
   - [Security Hardening](https://docs.mongodb.com/manual/core/security-hardening/)
   - [Deploy Shard Cluster](https://docs.mongodb.com/manual/tutorial/deploy-shard-cluster/)
   - [Add Shards to Cluster](https://docs.mongodb.com/manual/tutorial/add-shards-to-shard-cluster)
