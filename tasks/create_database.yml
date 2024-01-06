@@ -5,8 +5,7 @@
     dest: /tmp/create_database.js
 
 - name: Run the create_database.js script
-  shell: mongosh --port {{ rs_port }} < /tmp/create_database.js
-  when: true
+  shell: mongosh --port {{ rs_port }} < /tmp/create_database.js >> {{ log_path }}/database_create.log
 
 - name: Remove the create_database script
   file:

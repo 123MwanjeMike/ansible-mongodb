@@ -10,3 +10,4 @@
     - "{{ log_path }}/rs_init.log"
     - "{{ log_path }}/admin_init.log"
     - "{{ log_path }}/shard_add.log"
+    - "{{ log_path }}/database_create.log"
