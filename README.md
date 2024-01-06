@@ -51,22 +51,6 @@ replica_set:
   group: "db-data-servers" # group name for all servers in the replica set
 ```
 
-## Tags/Flags
-You can use a system of flags and tags that allow the calling playbook to specify which roles are run.
-For example:
-
-```bash
-ansible-playbook playbooks/mongodb.yml -e "{'flags': ['install_mongo']}"
-ansible-playbook playbooks/mongodb.yml -e "{'flags': ['configure_mongo']}"
-ansible-playbook playbooks/mongodb.yml -e "{'flags': ['clear_logs']}"
-ansible-playbook playbooks/mongodb.yml -e "{'flags': ['prepare_members']}"
-ansible-playbook playbooks/mongodb.yml -e "{'flags': ['start_mongo']}"
-ansible-playbook playbooks/mongodb.yml -e "{'flags': ['init_replica']}"
-ansible-playbook playbooks/mongodb.yml -e "{'flags': ['create_admin']}"
-ansible-playbook playbooks/mongodb.yml -e "{'flags': ['add_shard']}"
-ansible-playbook playbooks/mongodb.yml -e "{'flags': ['create_database']}"
-ansible-playbook playbooks/mongodb.yml -e "{'flags': ['stop_mongo']}"
-```
 
 ## Flags and Variables
 | Flag                 | Purpose                                                                          |
@@ -108,10 +92,30 @@ ansible-playbook playbooks/mongodb.yml -e "{'flags': ['stop_mongo']}"
     - { role: 123mwanjemike.ansible_mongodb, flags: ["clear_logs"] }
     - { role: 123mwanjemike.ansible_mongodb, flags: ["prepare_members"] }
     - { role: 123mwanjemike.ansible_mongodb, flags: ["start_mongo"] }
-    - { role: 123mwanjemike.ansible_mongodb, flags: ["init_replica"], when: cluster_role != 'router' }
-    - { role: 123mwanjemike.ansible_mongodb, flags: ["create_admin"], when: cluster_role != 'router' }
-    - { role: 123mwanjemike.ansible_mongodb, flags: ["add_shard"], when: cluster_role == 'router' }
-    - { role: 123mwanjemike.ansible_mongodb, flags: ["add_shard"], when: cluster_role == 'router' }
+    - {
+        role: 123mwanjemike.ansible_mongodb,
+        flags: ["init_replica"],
+        when: cluster_role != 'router',
+      }
+    - {
+        role: 123mwanjemike.ansible_mongodb,
+        flags: ["create_admin"],
+        when: cluster_role != 'router',
+        # delegate to the first host in the replica set
+        delegate_to: "{{ groups[replica_set.group] | first }}",
+      }
+    - {
+        role: 123mwanjemike.ansible_mongodb,
+        flags: ["add_shard"],
+        when: cluster_role == 'router',
+        run_once: true,
+      }
+    - {
+        role: 123mwanjemike.ansible_mongodb,
+        flags: ["create_database"],
+        when: cluster_role == 'router',
+        run_once: true,
+      }
     - { role: 123mwanjemike.ansible_mongodb, flags: ["stop_mongo"] }
 ```
 
