@@ -1,19 +1,20 @@
 ---
+auth_db: "admin"
 mount_base: /mnt/data
 mount_path: "{{ mount_base }}/mongodb"
 storage_path: /srv/mongodb
 log_path: "/var/log/mongodb"
 log_file: "{{ log_path }}/mongodb.log"
-keyfile_src: ./keyfile
 keyfile_path: "{{ storage_path }}/mongodb-keyfile"
 ports:
   router: 27017
   shard: 27018
   config: 27019
 mongo_configs:
+  "7.0":
+    ppa_pubkey: 4B7C549A058F8B6B
+    keyfile_name: server-7.0.asc
   "6.0":
     ppa_pubkey: 4B7C549A058F8B6B
     keyfile_name: server-6.0.asc
-  "4.0":
-    ppa_pubkey: 9DA31620334BD75D9DCB49F368818C72E52529D4
-    keyfile_name: server-4.0.asc
+mongo_version: "7.0"
