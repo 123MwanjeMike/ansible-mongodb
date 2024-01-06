@@ -1,0 +1,9 @@
+---
+- name: Stop mongos if host is running mongos
+  shell: if [ -e "/etc/systemd/system/mongos.service" ]; then systemctl stop mongos; fi
+
+- name: Stop mongod if host is running mongod
+  shell: |
+    if [ -e "/etc/systemd/system/mongos.service" ] || [ -e "/etc/systemd/system/mongod.service" ]; then
+      systemctl stop mongod
+    fi

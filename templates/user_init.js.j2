@@ -1,9 +1,0 @@
-// Create the user administrator and cluster administrator
-db.createUser({
-  user: "{{ user }}",
-  pwd: "{{ user_password }}",
-  roles: [
-    { role: "readWrite", db: "{{ tgt_db }}" },
-    { role: "userAdmin", db: "{{ tgt_db }}" }
-  ]
-});

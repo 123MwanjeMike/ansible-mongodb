@@ -1,0 +1,48 @@
+---
+- name: Configuring the replica set
+  set_fact:
+    configuring_replica_set: true
+
+- name: Upload mongod config file
+  template:
+    src: templates/mongod.conf.j2
+    dest: /etc/mongod.conf
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
+
+- name: Save the replica_init.js template to remote tmp
+  template:
+    src: templates/replica_init.js.j2
+    dest: /tmp/replica_init.js
+
+- name: Run the replica_init.js script
+  shell: mongosh --port {{ rs_port }} < /tmp/replica_init.js > {{ log_path }}/rs_init.log
+  register: res_rsi
+  until: res_rsi.rc == 0
+  retries: 3
+  delay: 5
+  delegate_to: "{{ groups[replica_set.group] | first }}"
+  args:
+    creates: "{{ log_path }}/rs_init.log"
+
+- name: Wait for changes to propagate
+  pause:
+    seconds: 5
+
+- name: Remove the replica_init.js script from remote tmp
+  file:
+    dest: /tmp/replica_init.js
+    state: absent
+
+- name: No longer configuring the replica set
+  set_fact:
+    configuring_replica_set: false
+
+- name: Restore the final mongodb configuration
+  template:
+    src: templates/mongod.conf.j2
+    dest: /etc/mongod.conf
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r

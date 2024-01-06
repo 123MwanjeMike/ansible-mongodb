@@ -2,7 +2,7 @@ var newDb = db.getSiblingDB("{{ tgt_db }}");
 
 db.getSiblingDB("{{ auth_db }}").auth("{{ adminUser }}", "{{ adminPass }}");
 
-// sh.enableSharding("{{ tgt_db }}");
+sh.enableSharding("{{ tgt_db }}");
 
 var _user = newDb.getUser("{{ userName }}");
 

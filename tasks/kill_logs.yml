@@ -1,9 +1,0 @@
----
-- name: Kill logs
-  file:
-    path: "{{ item }}"
-    state: absent
-  with_items:
-    - "{{ log_path }}/mongodb.log"
-    - "{{ log_path }}/mongod.log"
-    - "{{ log_path }}/mongos.log"

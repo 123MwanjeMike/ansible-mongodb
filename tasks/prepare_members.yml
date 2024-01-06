@@ -1,0 +1,57 @@
+---
+- name: Delete existing storage_path directory
+  file:
+    path: "{{ storage_path }}"
+    state: absent
+
+- name: Status  mounted data directory
+  stat:
+    path: "{{ mount_base }}"
+  register: stat_mnt
+
+- name: Delete existing mounted directory
+  file:
+    path: "{{ mount_path }}"
+    state: absent
+  when: stat_mnt.stat.isdir is defined and stat_mnt.stat.isdir
+
+- name: Create db dir, mounted
+  file:
+    path: "{{ mount_path }}"
+    state: directory
+    owner: mongodb
+    group: mongodb
+    mode: 0755
+  when: stat_mnt.stat.isdir is defined and stat_mnt.stat.isdir
+
+- name: Create link, if needed
+  file:
+    src: "{{ mount_path }}"
+    dest: "{{ storage_path }}"
+    state: link
+    owner: mongodb
+    group: mongodb
+    mode: 0755
+  when: stat_mnt.stat.isdir is defined and stat_mnt.stat.isdir
+
+- name: Create new storage_path directory and set ownership
+  file:
+    path: "{{ storage_path }}"
+    state: directory
+    owner: mongodb
+    group: mongodb
+    mode: 0755
+
+- name: Copy mongo keyfile
+  copy:
+    src: "{{ keyfile_src }}"
+    dest: "{{ keyfile_path }}"
+    owner: mongodb
+    group: mongodb        
+    mode: 0400
+
+- name: Change mongodb file permissions
+  file:
+    path: /var/lib/mongodb/
+    owner: mongodb
+    group: mongodb

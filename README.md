@@ -1,141 +1,147 @@
-##### Note
-This ansible role was originally templated from [isaackehle](https://github.com/isaackehle)'s work [here](https://github.com/isaackehle/ansible-mongodb).
-The reason for a different role is that this one is intended to be more light weight and thus prune's some functionalities from the original which some users may still need.
-
 # Ansible Role - mongodb
 
-Configure the components of a MongoDB Cluster
-Available on [Ansible Galaxy](https://galaxy.ansible.com/123mwanjemike/ansible_mongodb)
+Configure the components of a MongoDB Cluster. This role is available [here on Ansible Galaxy](https://galaxy.ansible.com/123mwanjemike/ansible_mongodb)
 
-## Variables
-Required definitions are as follows:
+#### Required ansible host/group variables
 
-```yaml
-cfg_server:
-  name: "my-cfg" # (Required)
-  group: "my-cfg-servers" # (Required) Always pass in the group id used for the config servers
-
-replica_set:
-  name: "my-cfg" # name of the replica set for the config server (prefix of fqdn)
-  group: "my-cfg-servers" # group name for all servers in the replica set
-```
-
-##### Assumptions
-Both the config and shard hosts belong to already initiated respective replicasets
-
-### Roadmap
-**May 2023**
-- [ ] Creates admin user
-- [ ] Creates the normal user
-
-**June 2023**
-- [ ] Initiates the config replicaset(s)
-- [ ] Can initiate a shard replicaset(s)
-- [ ] Adds the shard replicaset(s)
-
-Host Definitions typically contain the following:
-
-### Replica Set Only
-```yaml
-cluster_role: "replicaSet"
-```
-
-### Router Server
-```yaml
-cluster_role: "router"
-```
-
-### Config Server
+For each host/group, the `cluster_role`: Which is either of replicaSet, router, config or shard.
+The `replica_set` is also required for host groups that are in a replica set and is a dictionary with the following keys:
+- name: The name of the replica set
+- group: The name of the host group in the inventory that the replica set belongs to
+For example:
 ```yaml
 cluster_role: "config"
 replica_set:
-  name: "my-cfg" # name of the replica set for the config server (prefix of fqdn)
-  group: "my-cfg-servers" # group name for all servers in the replica set
+    name: "cfgsvr"
+    group: "config_servers"
 ```
 
-### Shard Server
+#### Sample inventory
 ```yaml
-cluster_role: "shard"
-replica_set:
-  name: "db-data" # name of the replica set for the shard server (prefix of fqdn)
-  group: "db-data-servers" # group name for all servers in the replica set
+all:
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+  children:            
+    mongo_cluster:
+      children:
+        mongos_routers:
+          hosts:
+            mongos-router-0.europe-north1-b.c.oceanic-muse-408212.internal:
+          vars:
+            cluster_role: "router"
+        config_servers:
+          hosts:
+            mongod-cfgsvr-0.europe-north1-b.c.oceanic-muse-408212.internal:
+            mongod-cfgsvr-1.europe-north1-c.c.oceanic-muse-408212.internal:
+            mongod-cfgsvr-2.europe-north1-a.c.oceanic-muse-408212.internal:
+          vars:
+            cluster_role: "config"
+            replica_set:
+              name: "cfgsvr"
+              group: "config_servers"
+        shard_0:
+          hosts:
+            mongod-shard-0-0.europe-north1-b.c.oceanic-muse-408212.internal:
+            mongod-shard-0-1.europe-north1-c.c.oceanic-muse-408212.internal:
+            mongod-shard-0-2.europe-north1-a.c.oceanic-muse-408212.internal:
+          vars:
+            cluster_role: "shard"
+            replica_set:
+              name: "shard-0"
+              group: "shard_0"
+        plain_replica_set:
+          hosts:
+            mongod-rs0-0.europe-north1-b.c.oceanic-muse-408212.internal:
+            mongod-rs0-1.europe-north1-c.c.oceanic-muse-408212.internal:
+            mongod-rs0-0-2.europe-north1-a.c.oceanic-muse-408212.internal:
+          vars:
+            cluster_role: "replicaSet"
+            replica_set:
+              name: "rs0"
+              group: "plain_replica_set"
 ```
 
-## Tags/Flags
-I use a system of flags and tags that allow the calling playbook to specify which roles are run.
-As an example:
+**NOTE**: It is important that the hostnames are the FQDNs of the hosts as shown in the example above.
 
-```bash
-ansible-playbook playbooks/mongodb.yml -e "{'flags': ['install']}"
-ansible-playbook playbooks/mongodb.yml -e "{'flags': ['save_config']}"
-ansible-playbook playbooks/mongodb.yml -e "{'flags': ['reset_storage']}"
-ansible-playbook playbooks/mongodb.yml -e "{'flags': ['init_replica_set']}"
-ansible-playbook playbooks/mongodb.yml -e "{'flags': ['add_shard_to_cluster']}"
-ansible-playbook playbooks/mongodb.yml -e "{'flags': ['create_database']}"
-```
+#### Flags and Variables
+| Flag            | Variables                         | Description                                                                      |
+| --------------- | --------------------------------- |--------------------------------------------------------------------------------- |
+| install_mongo   | none                              | Installs mongo packages                                                          |
+| start_mongo     | none                              | Starts mongo database and/or server                                              |
+| stop_mongo      | none                              | Stops mongo database and/or server                                               |
+| configure_mongo | cfg_server                        | Configures mongo                                                                 |
+| prepare_members | keyfile_src                       | Prepares the mongodb sharded cluster members. **Deletes existing mongodb data!** |
+| init_replica    | none                              | Creates a mongodb replica set                                                    |
+| create_admin    | adminUser, adminPass              | Creates the admin user                                                           |
+| add_shard       | new_shard                         | Adds a shard replicaset server to the sharded cluster                            |
+| create_database | tgt_db, roles, userName, userPass | Creates a database with sharding enabled. Creates respective user if not present |
+| clear_logs      | none                              | Clears all the sharded cluster logs                                              |
 
-## Flags and Variables
-| Flag                 | Purpose                                                                          |
-| -------------------- | -------------------------------------------------------------------------------- |
-| install              | Install mongo packages                                                           |
-| save_config          | Basic initialization. Stop Services, push service/config files, restart services |
-| reset_storage        | Clear directories and logs                                                       |
-| init_replica_set     | Initialize the replica set configuration                                         |
-| add_shard_to_cluster | Add a replica set of a shard server to the cluster of shard servers              |
-| create_database      | Do an initial database creation, with username and password                      |
 
-```yaml
-vars:
-  flags: ["install"]
-  new_shard:
-    name: # Name of the replica set to add to the config server
-    server: # One of the members of the new replicate set to add
-```
-
-## Examples
+##### Sample playbook
 ```yaml
 - hosts: all
   vars:
-    auth_db: ""
+    # Used to create admin user
     adminUser: ""
     adminPass: ""
+    # Used to add a shard replicaset
+    new_shard:
+      name: "shard-0" # shard name
+      group: "shard_0" # group name from inventories/hosts
+    # Used to create a database instance on the cluster
     tgt_db: ""
+    roles: ["readWrite", "userAdmin"]
+    # Used to create a basic user for the database instance above
     userName: ""
     userPass: ""
-    roles: ["readWrite", "userAdmin"]
+    # Used to prepare the members of the sharded cluster
+    keyfile_src: "./keyfile" # Path to the keyfile on the ansible controller
+    # Used to configure the cluster members
+    cfg_server:
+      name: "cfgsvr"
+      group: "config_servers"
 
-    # For when initializing the replica set
-    adminUser: ''
-    adminPass: ''
+  # Generate a keyfile
+  pre_tasks:
+    - name: Generate random string with OpenSSL on ansible controller
+      shell: openssl rand -base64 756 > 
+      delegate_to: localhost
+      args:
+        creates: keyfile
 
   roles:
-    - { role: 123mwanjemike.mongodb, flags: ['install'] }
-    - { role: 123mwanjemike.mongodb, flags: ['save_config'] }
-    - { role: 123mwanjemike.mongodb, flags: ['reset_storage'] }
-    - { role: 123mwanjemike.mongodb, flags: ['init_replica_set'] }
-    - { role: 123mwanjemike.mongodb, flags: ['add_shard_to_cluster'] }
-    - { role: 123mwanjemike.mongodb, flags: ['create_database'] }
+    - { role: 123mwanjemike.ansible_mongodb, flags: ["install_mongo"] }
+    - { role: 123mwanjemike.ansible_mongodb, flags: ["configure_mongo"] }
+    - { role: 123mwanjemike.ansible_mongodb, flags: ["clear_logs"] }
+    - { role: 123mwanjemike.ansible_mongodb, flags: ["prepare_members"] }
+    - { role: 123mwanjemike.ansible_mongodb, flags: ["start_mongo"] }
+    - {
+        role: 123mwanjemike.ansible_mongodb,
+        flags: ["init_replica"],
+        when: cluster_role != 'router',
+      }
+    - {
+        role: 123mwanjemike.ansible_mongodb,
+        flags: ["create_admin"],
+        when: cluster_role != 'router',
+        delegate_to: "{{ groups[replica_set.group] | first }}",
+      }
+    - {
+        role: 123mwanjemike.ansible_mongodb,
+        flags: ["add_shard"],
+        when: cluster_role == 'router',
+        run_once: true,
+      }
+    - {
+        role: 123mwanjemike.ansible_mongodb,
+        flags: ["create_database"],
+        when: cluster_role == 'router',
+        run_once: true,
+      }
+    - { role: 123mwanjemike.ansible_mongodb, flags: ["stop_mongo"] }
 ```
 
-## Linting
-```bash
-yamllint -c yamllint.yaml .
-ansible-lint .
-```
-
-### References
-- MongoDB
-  - [Security Hardening](https://docs.mongodb.com/manual/core/security-hardening/)
-  - [X509](https://docs.mongodb.com/manual/core/security-x.509/)
-  - [Deploy Shard Cluster](https://docs.mongodb.com/manual/tutorial/deploy-shard-cluster/)
-  - [Add Shards to Cluster](https://docs.mongodb.com/manual/tutorial/add-shards-to-shard-cluster)
-  - [Authorization](https://docs.mongodb.com/manual/core/authorization/)
-  - [Internal Auth](https://docs.mongodb.com/manual/core/security-internal-authentication/)
-  - [Configure Member Certificates](https://docs.mongodb.com/manual/tutorial/configure-x509-member-authentication/*x509-member-certificate)
-  - [Enforce Keyfile Access Control](https://docs.mongodb.com/manual/tutorial/enforce-keyfile-access-control-in-existing-replica-set/)
-  - [Deploy Replica Set w/ Keyfill Access Control](https://docs.mongodb.com/v3.2/tutorial/deploy-replica-set-with-keyfile-access-control/)
-  - [db.createUser()](https://docs.mongodb.com/manual/reference/method/db.createUser/#db.createUser)
-  - [Secure MongoDB With x509](https://www.mongodb.com/blog/post/secure-mongodb-with-x-509-authentication)
-- Digital Ocean
-  - [Implement Replica Sets on Ubuntu VPS](https://www.digitalocean.com/community/tutorials/how-to-implement-replication-sets-in-mongodb-on-an-ubuntu-vps)
-  - [Create a Sharded Cluster 12.04](https://www.digitalocean.com/community/tutorials/how-to-create-a-sharded-cluster-in-mongodb-using-an-ubuntu-12-04-vps)
+###### Notes:
+1. The setup is best suited for implementation behind a VPC and thus implements authentication using a keyfile. If you need to use x509 certificates, you can use the [x509 security](https://www.mongodb.com/docs/manual/core/security-x.509/) documentation to guide you on how to implement it.
+2. This ansible role was originally templated from [this role](https://galaxy.ansible.com/ui/standalone/roles/isaackehle/ansible_mongodb/). This particular one is however intended to be light weight and easy to use and thus users that may need a more sophisticated setup can still checkout the original role.

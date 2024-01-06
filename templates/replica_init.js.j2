@@ -1,0 +1,27 @@
+var opt = {
+    _id: "{{ replica_set.name }}",
+    version: 1,
+    members: [],
+    settings: {
+        heartbeatIntervalMillis: 2000
+    }
+};
+
+{% if cluster_role == 'config' %}
+// Set this to specify the replica set is a config server
+opt.configsvr = true;
+{% endif %}
+
+{% if cluster_role == 'shard' %}
+// Set this to specify the replica set is a shard server
+{% endif %}
+
+{% for hn in groups[replica_set.group] %}
+  {% if loop.first %}
+    opt.members.push({_id: {{ loop.index0 }}, host: '{{ hostvars[ hn ].inventory_hostname }}:{{ rs_port }}', priority: 2 });
+  {% else %}
+    opt.members.push({_id: {{ loop.index0 }}, host: '{{ hostvars[ hn ].inventory_hostname }}:{{ rs_port }}'});
+  {% endif %}
+{% endfor %}
+
+rs.initiate(opt);

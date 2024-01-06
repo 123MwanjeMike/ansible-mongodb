@@ -1,5 +1,0 @@
----
-- name: Start mongodb service
-  service:
-      name: mongod
-      state: started
