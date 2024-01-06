@@ -23,16 +23,6 @@ replica_set:
   group: "my-cfg-servers" # group name for all servers in the replica set
 ```
 
-### Roadmap
-**May 2023**
-- [x] Creates admin user
-- [ ] Creates the normal user
-
-**June 2023**
-- [x] Initiates the config replicaset(s)
-- [x] Can initiate a shard replicaset(s)
-- [x] Adds the shard replicaset(s)
-
 Host Definitions typically contain the following:
 
 ### Replica Set Only
@@ -83,13 +73,13 @@ ansible-playbook playbooks/mongodb.yml -e "{'flags': ['stop_mongo']}"
 | -------------------- | -------------------------------------------------------------------------------- |
 | install_mongo        | Installs mongo packages                                                          |
 | start_mongo          | Starts mongo database and/or server                                              |
-| stop_mongo           | Stop mongo database and/or server                                                |
-| configure_mongo      | Configure mongo                                                                  |
+| stop_mongo           | Stops mongo database and/or server                                               |
+| configure_mongo      | Configures mongo                                                                 |
 | prepare_members      | Prepares the mongodb sharded cluster members. **Deletes existing mongodb data!** |
-| init_replica         | Initialize the replica set configuration                                         |
+| init_replica         | Initializes the replica set configuration                                        |
 | create_admin         | Creates the admin user                                                           |
-| add_shard            | Add a shard replicaset server to the sharded cluster                             |
-| create_database      | Do an initial database creation, with username and password                      |
+| add_shard            | Adds a shard replicaset server to the sharded cluster                            |
+| create_database      | Creates a database with sharding enabled. Creates respective user if not present |
 | clear_logs           | Clears all the sharded cluster logs                                              |
 
 
@@ -98,21 +88,17 @@ ansible-playbook playbooks/mongodb.yml -e "{'flags': ['stop_mongo']}"
 - hosts: all
   vars:
     auth_db: "" # Optional: default is admin
-
-    # For when initializing the replica set
+    # Used to initialize the replica set
     adminUser: ""
     adminPass: ""
-
-    # For when adding a shard replicaset
+    # Used to add a shard replicaset
     new_shard:
       name: "shard-0" # shard name
       group: "shard_0" # group name from inventories/hosts
-
-    # For when creating the database
+    # Used to create a database instance on the cluster
     tgt_db: ""
     roles: ["readWrite", "userAdmin"]
-
-    # For when creating the normal user
+    # Used to create a basic user for the database instance above
     userName: ""
     userPass: ""
 
@@ -124,6 +110,7 @@ ansible-playbook playbooks/mongodb.yml -e "{'flags': ['stop_mongo']}"
     - { role: 123mwanjemike.ansible_mongodb, flags: ["start_mongo"] }
     - { role: 123mwanjemike.ansible_mongodb, flags: ["init_replica"], when: cluster_role != 'router' }
     - { role: 123mwanjemike.ansible_mongodb, flags: ["create_admin"], when: cluster_role != 'router' }
+    - { role: 123mwanjemike.ansible_mongodb, flags: ["add_shard"], when: cluster_role == 'router' }
     - { role: 123mwanjemike.ansible_mongodb, flags: ["add_shard"], when: cluster_role == 'router' }
     - { role: 123mwanjemike.ansible_mongodb, flags: ["stop_mongo"] }
 ```
