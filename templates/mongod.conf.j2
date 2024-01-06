@@ -5,24 +5,6 @@ systemLog:
   destination: file
   logAppend: true
   path: {{ log_file }}
-  verbosity: 0
-  component:
-    control:
-      verbosity: 0
-    command:
-      verbosity: 0
-    sharding:
-      verbosity: 0
-    ftdc:
-      verbosity: 0
-    replication:
-      verbosity: 0
-    network:
-      verbosity: 0
-    query:
-      verbosity: 0
-    storage:
-      verbosity: 0
 
 {% if cluster_role == 'shard' or cluster_role == 'config' or cluster_role == 'replicaSet' %}
 storage:
