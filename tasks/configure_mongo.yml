@@ -1,19 +1,19 @@
 ---
 - name: Set the cfg_rs_servers variable
-  set_fact:
+  ansible.builtin.set_fact:
     cfg_rs_servers: "{{ groups[cfg_server.group] | map('regex_replace', '$', ':{{ ports.config }}') | list }}"
   when: cfg_server is defined and cfg_server.group is defined
 
 - name: Set config_db variable
-  set_fact:
+  ansible.builtin.set_fact:
     config_db: "{{ cfg_server.name }}/{{ cfg_rs_servers | join(',') }}"
 
 - name: Set rs_port
-  set_fact:
+  ansible.builtin.set_fact:
     rs_port: "{{ ports[cluster_role] }}"
 
 - name: Remove existing mongo config files
-  file:
+  ansible.builtin.file:
     dest: "{{ item.dest }}"
     state: absent
   with_items:
@@ -26,15 +26,16 @@
     - { dest: /etc/mongodb.conf }
     - { dest: /etc/mongod.conf }
     - { dest: /etc/mongos.conf }
-    
+
 - name: Put new mongo settings in place
-  template:
+  ansible.builtin.template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
+    mode: "0644"
   with_items:
     - { src: ../templates/mongod.service.j2, dest: /etc/systemd/system/mongod.service }
     - { src: ../templates/mongod.conf.j2, dest: /etc/mongod.conf }
 
 - name: Reload the systemd daemon
-  systemd:
-    daemon_reload: yes
+  ansible.builtin.systemd:
+    daemon_reload: true

@@ -4,7 +4,8 @@ Configure the components of a MongoDB Cluster. This role is available [here on A
 
 #### Required ansible host/group variables
 
-For each host/group, the `cluster_role`: Which is either of replicaSet, router, config or shard.
+For each host/group, the `cluster_role` is either of replicaSet, router, config or shard.
+
 The `replica_set` is also required for host groups that are in a replica set and is a dictionary with the following keys:
 - name: The name of the replica set
 - group: The name of the host group in the inventory that the replica set belongs to

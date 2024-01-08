@@ -1,13 +1,17 @@
 ---
 - name: Save the create_database script
-  template:
+  ansible.builtin.template:
     src: templates/create_database.js.j2
     dest: /tmp/create_database.js
+    mode: "0777"
 
 - name: Run the create_database.js script
-  shell: mongosh --port {{ rs_port }} < /tmp/create_database.js >> {{ log_path }}/database_create.log
+  ansible.builtin.shell: mongosh --port {{ rs_port }} < /tmp/create_database.js >> {{ log_path }}/database_create.log
+  register: database_creation
+  until: database_creation.rc == 0
+  changed_when: database_creation.rc == 0
 
 - name: Remove the create_database script
-  file:
+  ansible.builtin.file:
     dest: /tmp/create_database.js
     state: absent

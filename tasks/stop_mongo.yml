@@ -1,9 +1,13 @@
 ---
 - name: Stop mongos if host is running mongos
-  shell: if [ -e "/etc/systemd/system/mongos.service" ]; then systemctl stop mongos; fi
+  ansible.builtin.shell: if [ -e "/etc/systemd/system/mongos.service" ]; then systemctl stop mongos; fi
+  register: stop_mongos
+  changed_when: stop_mongos.rc == 0
 
 - name: Stop mongod if host is running mongod
-  shell: |
+  ansible.builtin.shell: |
     if [ -e "/etc/systemd/system/mongos.service" ] || [ -e "/etc/systemd/system/mongod.service" ]; then
       systemctl stop mongod
     fi
+  register: stop_mongod
+  changed_when: stop_mongod.rc == 0
