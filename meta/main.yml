@@ -1,12 +1,14 @@
 galaxy_info:
-  author: Mike Mwanje
-  description: Configure the components of a MongoDB Cluster
-  company: 123mwanjemike
+  namespace: mwanjemike
+  role_name: ansible_mongodb
+  author: 123MwanjeMike
+  description: Create a MongoDB Cluster from scratch
   license: MIT
   min_ansible_version: 2.8
   platforms:
     - name: Ubuntu
       versions:
+        - all
         - jammy
         - focal
         - xenial
