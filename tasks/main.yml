@@ -1,40 +1,40 @@
 ---
 - name: Install mongo packages
-  include_tasks: install_mongo.yml
+  ansible.builtin.include_tasks: install_mongo.yml
   when: ((['install_mongo'] | intersect(flags)) | length > 0)
 
 - name: Configure mongo
-  include_tasks: save_configuration.yml
+  ansible.builtin.include_tasks: configure_mongo.yml
   when: ((['configure_mongo'] | intersect(flags)) | length > 0)
 
 - name: Start the mongo service
-  include_tasks: start_mongo.yml
+  ansible.builtin.include_tasks: start_mongo.yml
   when: ((['start_mongo'] | intersect(flags)) | length > 0)
 
 - name: Stop the mongo service
-  include_tasks: stop_mongo.yml
+  ansible.builtin.include_tasks: stop_mongo.yml
   when: ((['stop_mongo'] | intersect(flags)) | length > 0)
 
 - name: Clear all sharded cluster logs
-  include_tasks: clear_logs.yml
+  ansible.builtin.include_tasks: clear_logs.yml
   when: ((['clear_logs'] | intersect(flags)) | length > 0)
 
 - name: Prepare all cluster members
-  include_tasks: prepare_members.yml
+  ansible.builtin.include_tasks: prepare_members.yml
   when: ((['prepare_members'] | intersect(flags)) | length > 0)
 
 - name: Init replica set
-  include_tasks: init_replica.yml
+  ansible.builtin.include_tasks: init_replica.yml
   when: ((['init_replica'] | intersect(flags)) | length > 0)
 
 - name: Create admin user
-  include_tasks: create_admin.yml
+  ansible.builtin.include_tasks: create_admin.yml
   when: ((['create_admin'] | intersect(flags)) | length > 0)
 
 - name: Add shard to cluster
-  include_tasks: add_shard.yml
+  ansible.builtin.include_tasks: add_shard.yml
   when: ((['add_shard'] | intersect(flags)) | length > 0)
 
 - name: Create database
-  include_tasks: create_database.yml
+  ansible.builtin.include_tasks: create_database.yml
   when: ((['create_database'] | intersect(flags)) | length > 0)

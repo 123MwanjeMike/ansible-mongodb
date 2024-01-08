@@ -1,6 +1,6 @@
 ---
 - name: Clear logs
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: absent
   with_items:

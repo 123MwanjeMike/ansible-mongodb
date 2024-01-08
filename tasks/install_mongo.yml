@@ -1,32 +1,33 @@
 ---
 - name: Get release value
-  shell: lsb_release -sc
+  ansible.builtin.command: lsb_release -sc
   register: lsb_release_out
   when: true
+  changed_when: lsb_release_out.rc == 0
 
 - name: Add an apt key by id from a keyserver
-  apt_key:
+  ansible.builtin.apt_key:
     url: https://www.mongodb.org/static/pgp/{{ mongo_configs[mongo_version].keyfile_name }}
     state: present
 
 - name: Update apt cache
-  apt:
-    update_cache: yes
+  ansible.builtin.apt:
+    update_cache: true
 
 - name: Install required packages
-  apt:
+  ansible.builtin.apt:
     name:
       - build-essential
       - gpg
     state: present
 
 - name: Set lsb_release and mongo_cfg variables
-  set_fact:
+  ansible.builtin.set_fact:
     lsb_release: "{{ lsb_release_out.stdout }}"
     mongo_cfg: "{{ mongo_configs[mongo_version] }}"
 
 - name: Save mongod package list
-  template:
+  ansible.builtin.template:
     src: templates/mongod.list.j2
     dest: /etc/apt/sources.list.d/mongod.list
     owner: root
@@ -34,16 +35,16 @@
     mode: u=rw,g=r,o=r
 
 - name: Remove old mongodb packages
-  apt:
-    update_cache: yes
+  ansible.builtin.apt:
+    update_cache: true
     name: mongodb
     state: absent
 
 - name: Autoremove unused packages
-  apt:
-    autoremove: yes
+  ansible.builtin.apt:
+    autoremove: true
 
 - name: Install the mongodb packages
-  apt:
+  ansible.builtin.apt:
     name: mongodb-org
     state: present
