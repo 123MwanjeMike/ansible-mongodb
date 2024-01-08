@@ -2,6 +2,13 @@
 
 Configure the components of a MongoDB Cluster. This role is available [here on Ansible Galaxy](https://galaxy.ansible.com/123mwanjemike/ansible_mongodb)
 
+#### Using the role
+To install the role from this GitHub repo, add the following to your `requirements.yml` file:
+```yaml
+- src: https://github.com/123MwanjeMike/ansible-mongodb
+  version: v1.0.2
+```
+
 #### Required ansible host/group variables
 
 For each host/group, the `cluster_role` is either of replicaSet, router, config or shard.
