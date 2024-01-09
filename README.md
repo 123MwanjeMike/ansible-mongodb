@@ -7,7 +7,7 @@ Purpose: Create a MongoDB sharded cluster from scratch.
     ```yaml
     -   name: 123mwanjemike.ansible_mongodb
         src: https://github.com/123MwanjeMike/ansible-mongodb
-        version: v1.0.3
+        version: v1.0.4
     ```
 2. Install the role by running the ansible-galaxy install command:
     ```bash
@@ -29,6 +29,8 @@ replica_set:
     name: "cfgsvr"
     group: "config_servers"
 ```
+
+You may also checkout the values in the [vars/main.yml](vars/main.yaml) file and change them according to needs.
 
 #### Sample inventory
 ```yaml
