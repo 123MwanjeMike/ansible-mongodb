@@ -1,14 +1,28 @@
-# Ansible Role - mongodb
+# ansible-mongodb
 
-Configure the components of a MongoDB Cluster. This role is available [here on Ansible Galaxy](https://galaxy.ansible.com/123mwanjemike/ansible_mongodb)
+Purpose: Create a MongoDB sharded cluster from scratch.
+
+#### Getting started
+1. Start by adding the following to your `requirements.yml` file:
+    ```yaml
+    -   name: 123mwanjemike.ansible_mongodb
+        src: https://github.com/123MwanjeMike/ansible-mongodb
+        version: v1.0.3
+    ```
+2. Install the role by running the ansible-galaxy install command:
+    ```bash
+    ansible-galaxy install -r requirements.yml
+    ```
 
 #### Required ansible host/group variables
 
-For each host/group, the `cluster_role`: Which is either of replicaSet, router, config or shard.
+For each host/group, the `cluster_role` is either of *replicaSet*, *router*, *config* or *shard*.
+
 The `replica_set` is also required for host groups that are in a replica set and is a dictionary with the following keys:
 - name: The name of the replica set
 - group: The name of the host group in the inventory that the replica set belongs to
-For example:
+
+Below is an example:
 ```yaml
 cluster_role: "config"
 replica_set:

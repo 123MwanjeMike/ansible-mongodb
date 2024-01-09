@@ -1,10 +1,10 @@
 ---
 - name: Configuring the replica set
-  set_fact:
+  ansible.builtin.set_fact:
     configuring_replica_set: true
 
 - name: Upload mongod config file
-  template:
+  ansible.builtin.template:
     src: templates/mongod.conf.j2
     dest: /etc/mongod.conf
     owner: root
@@ -12,14 +12,15 @@
     mode: u=rw,g=r,o=r
 
 - name: Save the replica_init.js template to remote tmp
-  template:
+  ansible.builtin.template:
     src: templates/replica_init.js.j2
     dest: /tmp/replica_init.js
+    mode: "0777"
 
 - name: Run the replica_init.js script
-  shell: mongosh --port {{ rs_port }} < /tmp/replica_init.js > {{ log_path }}/rs_init.log
+  ansible.builtin.shell: mongosh --port {{ rs_port }} < /tmp/replica_init.js > {{ log_path }}/rs_init.log
   register: res_rsi
-  until: res_rsi.rc == 0
+  changed_when: res_rsi.rc == 0
   retries: 3
   delay: 5
   delegate_to: "{{ groups[replica_set.group] | first }}"
@@ -27,20 +28,20 @@
     creates: "{{ log_path }}/rs_init.log"
 
 - name: Wait for changes to propagate
-  pause:
+  ansible.builtin.pause:
     seconds: 5
 
 - name: Remove the replica_init.js script from remote tmp
-  file:
+  ansible.builtin.file:
     dest: /tmp/replica_init.js
     state: absent
 
 - name: No longer configuring the replica set
-  set_fact:
+  ansible.builtin.set_fact:
     configuring_replica_set: false
 
 - name: Restore the final mongodb configuration
-  template:
+  ansible.builtin.template:
     src: templates/mongod.conf.j2
     dest: /etc/mongod.conf
     owner: root

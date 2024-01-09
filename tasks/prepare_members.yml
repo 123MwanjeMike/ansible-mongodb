@@ -1,57 +1,57 @@
 ---
 - name: Delete existing storage_path directory
-  file:
+  ansible.builtin.file:
     path: "{{ storage_path }}"
     state: absent
 
 - name: Status  mounted data directory
-  stat:
+  ansible.builtin.stat:
     path: "{{ mount_base }}"
   register: stat_mnt
 
 - name: Delete existing mounted directory
-  file:
+  ansible.builtin.file:
     path: "{{ mount_path }}"
     state: absent
   when: stat_mnt.stat.isdir is defined and stat_mnt.stat.isdir
 
 - name: Create db dir, mounted
-  file:
+  ansible.builtin.file:
     path: "{{ mount_path }}"
     state: directory
     owner: mongodb
     group: mongodb
-    mode: 0755
+    mode: "0755"
   when: stat_mnt.stat.isdir is defined and stat_mnt.stat.isdir
 
 - name: Create link, if needed
-  file:
+  ansible.builtin.file:
     src: "{{ mount_path }}"
     dest: "{{ storage_path }}"
     state: link
     owner: mongodb
     group: mongodb
-    mode: 0755
+    mode: "0755"
   when: stat_mnt.stat.isdir is defined and stat_mnt.stat.isdir
 
 - name: Create new storage_path directory and set ownership
-  file:
+  ansible.builtin.file:
     path: "{{ storage_path }}"
     state: directory
     owner: mongodb
     group: mongodb
-    mode: 0755
+    mode: "0755"
 
 - name: Copy mongo keyfile
-  copy:
+  ansible.builtin.copy:
     src: "{{ keyfile_src }}"
     dest: "{{ keyfile_path }}"
     owner: mongodb
-    group: mongodb        
-    mode: 0400
+    group: mongodb
+    mode: "0400"
 
 - name: Change mongodb file permissions
-  file:
+  ansible.builtin.file:
     path: /var/lib/mongodb/
     owner: mongodb
     group: mongodb
