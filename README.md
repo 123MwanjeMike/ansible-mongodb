@@ -97,6 +97,7 @@ all:
 ##### Sample playbook
 ```yaml
 - hosts: all
+  become: true
   vars:
     # Used to create admin user
     adminUser: ""
@@ -121,7 +122,7 @@ all:
   # Generate a keyfile
   pre_tasks:
     - name: Generate random string with OpenSSL on ansible controller
-      shell: openssl rand -base64 756 > 
+      shell: openssl rand -base64 756 > keyfile
       delegate_to: localhost
       args:
         creates: keyfile
