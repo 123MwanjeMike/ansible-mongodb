@@ -97,6 +97,7 @@ all:
 ##### Sample playbook
 ```yaml
 - hosts: all
+  become: true
   vars:
     # Used to create admin user
     adminUser: ""
